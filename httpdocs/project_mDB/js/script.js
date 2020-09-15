@@ -17,6 +17,13 @@ P.S. Здесь есть несколько вариантов решения з
 
 'use strict';
 
+const promoContent = document.querySelector('.promo__content'),
+      movieList = promoContent.querySelector('.promo__interactive-list'),
+      adBlocks = document.querySelectorAll('.promo__adv img'),
+      form = promoContent.querySelector('form.add'),
+      input = form.querySelector('input[type="text"'),
+      checkbox = form.querySelector('input[type="checkbox"');
+
 let movieDB = {
     movies: [
         "Логан",
@@ -25,68 +32,67 @@ let movieDB = {
         "Одержимость",
         "Скотт Пилигрим против всех"
     ],
-    favourites : []
+    favourites : [],
+    show: function() {
+        movieList.innerHTML = '';
+        this.movies.sort().forEach((movie, i) => {
+            movieList.innerHTML += this.__renderMovieListItem(i+1, movie);
+        });
+        const btnAdd = form.querySelector('button'),
+              btnDelete = movieList.querySelectorAll('.delete');
+        btnAdd.addEventListener('click', (event) => {
+            event.preventDefault();
+            input.value = input.value.trim();
+            this.add(input.value);
+            this.show();
+        });
+        btnDelete.forEach(btn => {
+            btn.addEventListener('click', (event) => {
+                this.delete(btn.parentElement.dataset.name);
+                this.show();
+            });
+        });
+    },
+    add: function(movie) {
+        if (movie) {
+            movieDB.movies.push(escapeHtml(movie));
+            if(checkbox.checked) {
+                movieDB.favourites.push(movie);
+                console.log(movieDB);
+            }
+            input.value = '';
+        }
+    },
+    delete: function(movie) {
+        for(let i in movieDB.movies) {
+            if(movieDB.movies[i] == movie) {
+                movieDB.movies.splice(i, 1);
+            }
+        }
+    },
+    __renderMovieListItem: function(i, name) {
+        let nameSliced = name;
+        if (name.length > 21) {
+            nameSliced = name.slice(0, 21) + '...';
+        }
+        return `
+            <li class="promo__interactive-item" data-name="${name}">${nameSliced}
+                <span>${i}</span>
+                <div class="delete"></div>
+            </li>
+        `;
+    }
 };
-
-const promoContent = document.querySelector('.promo__content'),
-      movieList = promoContent.querySelector('.promo__interactive-list'),
-      adBlocks = document.querySelectorAll('.promo__adv img'),
-      form = promoContent.querySelector('form.add'),
-      input = form.querySelector('input[type="text"'),
-      checkbox = form.querySelector('input[type="checkbox"');
         
+//Удаление рекламных блоков
 adBlocks.forEach(item => item.remove());
 
 promoContent.querySelector('.promo__genre').textContent = 'драма';
 promoContent.querySelector('.promo__bg').style.backgroundImage = 'url(img/bg.jpg)';
 
-function renderMovieListItem(i, name) { 
-    let nameSliced = name;
-    if (name.length > 21) {
-        nameSliced = name.slice(0, 21) + '...';
-    }
-    return `
-        <li class="promo__interactive-item" data-name="${name}">${nameSliced}
-            <span>${i}</span>
-            <div class="delete"></div>
-        </li>
-    `;
+movieDB.show();
 
-}
-    
-function showMovieDB() {
-    movieList.innerHTML = '';
-    movieDB.movies.sort().forEach((movie, i) => {
-        movieList.innerHTML += renderMovieListItem(i+1, movie);
-    });
-    const btnAdd = form.querySelector('button'),
-          btnDelete = movieList.querySelectorAll('.delete');
-    btnAdd.addEventListener('click', (event) => {
-        event.preventDefault();
-        input.value = input.value.trim();
-        if (input.value) {
-            movieDB.movies.push(escapeHtml(input.value));
-            if(checkbox.checked) {
-                movieDB.favourites.push(input.value);
-                console.log(movieDB);
-            }
-            input.value = '';
-            showMovieDB();
-        }
-    });
-    btnDelete.forEach(btn => {
-        btn.addEventListener('click', (event) => {
-            for(let i in movieDB.movies) {
-                if(movieDB.movies[i] == btn.parentElement.dataset.name) {
-                    movieDB.movies.splice(i, 1);
-                }
-            }
-            showMovieDB();
-        });
-    });
-}
-showMovieDB();
-
+//------------------------------------------------
 function escapeHtml(unsafe) {
     return unsafe
          .replace(/&/g, "&amp;")
