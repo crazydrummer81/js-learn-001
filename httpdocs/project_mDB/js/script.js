@@ -16,81 +16,89 @@ P.S. Здесь есть несколько вариантов решения з
 5) Фильмы должны быть отсортированы по алфавиту */
 
 'use strict';
-
-const promoContent = document.querySelector('.promo__content'),
+document.addEventListener('DOMContentLoaded', () => {
+    const promoContent = document.querySelector('.promo__content'),
       movieList = promoContent.querySelector('.promo__interactive-list'),
       adBlocks = document.querySelectorAll('.promo__adv img'),
       form = promoContent.querySelector('form.add'),
       input = form.querySelector('input[type="text"'),
       checkbox = form.querySelector('input[type="checkbox"');
 
-let movieDB = {
-    movies: [
-        "Логан",
-        "Лига справедливости",
-        "Ла-ла лэнд",
-        "Одержимость",
-        "Скотт Пилигрим против всех"
-    ],
-    favourites : [],
-    show: function() {
-        movieList.innerHTML = '';
-        this.movies.sort().forEach((movie, i) => {
-            movieList.innerHTML += this._renderMovieListItem(i+1, movie);
-        });
-        const btnAdd = form.querySelector('button'),
-              btnDelete = movieList.querySelectorAll('.delete');
-        btnAdd.addEventListener('click', (event) => {
-            event.preventDefault();
-            input.value = input.value.trim();
-            this.add(input.value);
-            this.show();
-        });
-        btnDelete.forEach(btn => {
-            btn.addEventListener('click', (event) => {
-                this.delete(btn.parentElement.dataset.name);
+    let movieDB = {
+        movies: [
+            "Логан",
+            "Лига справедливости",
+            "Ла-ла лэнд",
+            "Одержимость",
+            "Скотт Пилигрим против всех"
+        ],
+        favourites : [],
+        isFafourite: function(movie) {
+            if (movieDB.favourites.indexOf(movie) > -1) { return true; }
+            else { return false; }
+        },
+        show: function() {
+            movieList.innerHTML = '';
+            this.movies.sort().forEach((movie, i) => {
+                movieList.innerHTML += this._renderMovieListItem(i+1, movie);
+            });
+            const btnsDelete = movieList.querySelectorAll('.delete');
+            form.addEventListener('submit', (event) => {
+                event.preventDefault();
+                input.value = input.value.trim();
+                this.add(input.value);
                 this.show();
             });
-        });
-    },
-    add: function(movie) {
-        if (movie) {
-            movieDB.movies.push(escapeHtml(movie));
-            if(checkbox.checked) {
-                movieDB.favourites.push(movie);
-                console.log(movieDB);
+            btnsDelete.forEach(btn => {
+                btn.addEventListener('click', (event) => {
+                    this.delete(btn.parentElement.dataset.id);
+                    this.show();
+                });
+            });
+        },
+        add: function(movie) {
+            if (movie) {
+                movieDB.movies.push(escapeHtml(movie));
+                if(checkbox.checked) {
+                    movieDB.favourites.push(movie);
+                }
+                this._resetForm();
             }
+        },
+        delete: function(id) {
+            if (id > movieDB.movies.length-1) {
+                console.error('Index to delete out of range');
+            }
+            movieDB.movies.splice(id, 1);
+        },
+        _renderMovieListItem: function(i, name) {
+            let nameSliced = name;
+            if (name.length > 21) {
+                nameSliced = name.slice(0, 21) + '...';
+            }
+            const favouriteClass = this.isFafourite(name) ? ' favourite' : '';
+            return `
+                <li class="promo__interactive-item${favouriteClass}" data-name="${name}" data-id="${i-1}">${nameSliced}
+                    <span>${i}</span>
+                    <div class="delete"></div>
+                </li>
+            `;
+        },
+        _resetForm: function() {
+            checkbox.checked = false;
             input.value = '';
         }
-    },
-    delete: function(movie) {
-        for(let i in movieDB.movies) {
-            if(movieDB.movies[i] == movie) {
-                movieDB.movies.splice(i, 1);
-            }
-        }
-    },
-    _renderMovieListItem: function(i, name) {
-        let nameSliced = name;
-        if (name.length > 21) {
-            nameSliced = name.slice(0, 21) + '...';
-        }
-        return `
-            <li class="promo__interactive-item" data-name="${name}">${nameSliced}
-                <span>${i}</span>
-                <div class="delete"></div>
-            </li>
-        `;
-    }
-};
-        
-//Удаление рекламных блоков
-adBlocks.forEach(item => item.remove());
+    };
+            
+    //Удаление рекламных блоков
+    adBlocks.forEach(item => item.remove());
 
-promoContent.querySelector('.promo__genre').textContent = 'драма';
-promoContent.querySelector('.promo__bg').style.backgroundImage = 'url(img/bg.jpg)';
+    promoContent.querySelector('.promo__genre').textContent = 'драма';
+    promoContent.querySelector('.promo__bg').style.backgroundImage = 'url(img/bg.jpg)';
 
-movieDB.show();
+    movieDB.show();
+});
+
 
 //------------------------------------------------
 function escapeHtml(unsafe) {
