@@ -36,7 +36,7 @@ let movieDB = {
     show: function() {
         movieList.innerHTML = '';
         this.movies.sort().forEach((movie, i) => {
-            movieList.innerHTML += this.__renderMovieListItem(i+1, movie);
+            movieList.innerHTML += this._renderMovieListItem(i+1, movie);
         });
         const btnAdd = form.querySelector('button'),
               btnDelete = movieList.querySelectorAll('.delete');
@@ -70,7 +70,7 @@ let movieDB = {
             }
         }
     },
-    __renderMovieListItem: function(i, name) {
+    _renderMovieListItem: function(i, name) {
         let nameSliced = name;
         if (name.length > 21) {
             nameSliced = name.slice(0, 21) + '...';
