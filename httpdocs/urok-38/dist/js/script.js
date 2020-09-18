@@ -121,7 +121,14 @@ document.addEventListener('DOMContentLoaded', () => {
     event.preventDefault();
     const target = event.target;
 
-    if (target && target.classList.contains('tabheader__item')) {}
+    if (target && target.classList.contains('tabheader__item')) {
+      tabs.forEach((item, i) => {
+        if (target == item) {
+          hideTabContent();
+          showTabContent(i);
+        }
+      });
+    }
   });
 });
 
