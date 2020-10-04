@@ -132,6 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
     }
+<<<<<<< HEAD
   }); // Timer
 
   const deadLine = '2020-10-06';
@@ -182,6 +183,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   setClock('.timer', deadLine);
+=======
+  });
+>>>>>>> d6d69f7a070dcbbefc4073a19546e61e756d8bad
 });
 
 /***/ })
