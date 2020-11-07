@@ -132,18 +132,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
     }
-<<<<<<< HEAD
-  }); // Timer
+  }); // ----------------- Timer -----------------------
 
-  const deadLine = '2020-10-06';
-
-  function getZero(num) {
-    if (num >= 0 && num < 10) {
-      return `0${num}`;
-    } else {
-      return num;
-    }
-  }
+  const deadLine = '2020-11-08';
 
   function getTimeRemaining(endtime) {
     const t = Date.parse(endtime) - Date.parse(new Date()),
@@ -182,11 +173,73 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  setClock('.timer', deadLine);
-=======
+  setClock('.timer', deadLine); // Модальное окно
+
+  const modalShowTrigger = document.querySelectorAll('[data-modal]'),
+        modal = document.querySelector('.modal'),
+        modalHideTrigger = modal.querySelectorAll('[data-close]');
+
+  function show(node, blockBlody = false) {
+    node.classList.remove('hide');
+    if (blockBlody) document.body.classList.add('blocked');
+    clearInterval(modalTimerId);
+  }
+
+  ;
+
+  function hide(node, unBlockBlody = false) {
+    node.classList.add('hide');
+    if (unBlockBlody) document.body.classList.remove('blocked');
+  }
+
+  ;
+  modalShowTrigger.forEach(button => {
+    button.addEventListener('click', () => {
+      show(modal, true);
+    });
   });
->>>>>>> d6d69f7a070dcbbefc4073a19546e61e756d8bad
+  modalHideTrigger.forEach(button => {
+    button.addEventListener('click', () => {
+      hide(modal, true);
+    });
+  });
+  modal.addEventListener('click', e => {
+    if (e.target === modal) {
+      hide(modal, true);
+    }
+
+    ;
+  });
+  document.addEventListener('keydown', e => {
+    if (e.code === 'Escape' && !modal.classList.contains('hide')) {
+      hide(modal, true);
+    }
+
+    ;
+  });
+  const modalTimerId = setTimeout(() => show(modal, true), 10000);
+
+  function showModalByScroll() {
+    if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
+      console.log('end');
+      show(modal, true);
+      window.removeEventListener('scroll', showModalByScroll);
+    }
+
+    ;
+  }
+
+  ;
+  window.addEventListener('scroll', showModalByScroll);
 });
+
+function getZero(num) {
+  if (num >= 0 && num < 10) {
+    return `0${num}`;
+  } else {
+    return num;
+  }
+}
 
 /***/ })
 
