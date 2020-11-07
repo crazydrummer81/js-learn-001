@@ -1,8 +1,72 @@
 "use strict";
 
+const menuData = [
+	{
+		image: 'img/tabs/vegy.jpg', 
+		title: 'Меню "Фитнес"', 
+		description: 'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!', 
+		price: 229
+	},
+	{
+		image: 'img/tabs/elite.jpg', 
+		title: 'Меню “Премиум”', 
+		description: 'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!', 
+		price: 550
+	},
+	{
+		image: 'img/tabs/post.jpg', 
+		title: 'Меню "Постное"', 
+		description: 'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков. ', 
+		price: 430
+	}
+];
+
+class MenuItem {
+	constructor(props = {image, title, description, price}) {
+		this.image = props.image;
+		this.title = props.title;
+		this.description = props.description;
+		this.price = props.price;
+	};
+
+	render() {
+		return `
+			<div class="menu__item">
+				<img src="${this.image}" alt="vegy">
+				<h3 class="menu__item-subtitle">${this.title}</h3>
+				<div class="menu__item-descr">${this.description}</div>
+				<div class="menu__item-divider"></div>
+				<div class="menu__item-price">
+					<div class="menu__item-cost">Цена:</div>
+					<div class="menu__item-total"><span>${this.price}</span> грн/день</div>
+				</div>
+			</div>
+		`;
+	}
+};
+
+class MenuField {
+	constructor(data) {
+		this.items = data.map((item) => new MenuItem(item));
+	};
+
+	render() {
+		return `
+			<div class="container">
+				${this.items.map((item) => item.render()).join('\n')}
+			</div>
+		`;
+	};
+};
+
 document.addEventListener('DOMContentLoaded', () => {
+	console.log('DOMContentLoaded');
+	// ------------- Cards ------------
+	const menuFieldNode = document.getElementById('menu__field');
+	const MenuFieldComponent = new MenuField(menuData);
+	menuFieldNode.innerHTML = MenuFieldComponent.render();
 	
-	// Tabs
+	//------------- Tabs --------------
 	const tabs = document.querySelectorAll('.tabheader__item'),
 			tabsContent = document.querySelectorAll('.tabcontent'),
 			tabsParent = document.querySelector('.tabheader__items');
@@ -127,18 +191,16 @@ document.addEventListener('DOMContentLoaded', () => {
 		};
 	});
 
-	const modalTimerId = setTimeout(() => show(modal, true), 10000);
+	// Показ попапа по времени после загрузки DOM
+	const modalTimerId = setTimeout(() => show(modal, true), 100000);
 
 	function showModalByScroll() {
-
 		if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
 			console.log('end');
 			show(modal, true);
 			window.removeEventListener('scroll', showModalByScroll);
 		};
-
 	};
-
 	window.addEventListener('scroll', showModalByScroll);
 
 });
