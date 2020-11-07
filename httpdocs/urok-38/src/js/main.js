@@ -40,12 +40,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	});
 
-	// Timer
+	// ----------------- Timer -----------------------
 	const deadLine = '2020-10-06';
-
-	function getZero(num) {
-		if (num >= 0 && num < 10) { return `0${num}`; } else {return num;}
-	}
 
 	function getTimeRemaining(endtime) {
 		const t = Date.parse(endtime) - Date.parse(new Date()),
@@ -69,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		      hours = timer.querySelector('#hours'),
 		      minutes = timer.querySelector('#minutes'),
 				seconds = timer.querySelector('#seconds'),
-				timeInterval = setInterval(updateClock, 1000);
+		timeInterval = setInterval(updateClock, 1000);
 
 		updateClock();
 
@@ -89,3 +85,8 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 	setClock('.timer', deadLine);
 });
+
+
+function getZero(num) {
+	if (num >= 0 && num < 10) { return `0${num}`; } else {return num;}
+}
