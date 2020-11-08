@@ -3,68 +3,77 @@
 const menuData = [
 	{
 		image: 'img/tabs/vegy.jpg', 
-		title: 'Меню "Фитнес"', 
+		title: 'Меню “Фитнес”', 
 		description: 'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!', 
-		price: 229
+		price: 22
 	},
 	{
 		image: 'img/tabs/elite.jpg', 
 		title: 'Меню “Премиум”', 
 		description: 'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!', 
-		price: 550
+		price: 55
 	},
 	{
 		image: 'img/tabs/post.jpg', 
-		title: 'Меню "Постное"', 
+		title: 'Меню “Постное”', 
 		description: 'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков. ', 
-		price: 430
+		price: 43
 	}
 ];
 
 class MenuItem {
-	constructor(props = {image, title, description, price}) {
+	constructor(props = {image, title, description, price, parentNode}) {
+		this._isAppended = false;
 		this.image = props.image;
 		this.title = props.title;
 		this.description = props.description;
+		this.transfer = 450;
 		this.price = props.price;
+		this.currency = 'тг';
+		this.parent = props.parentNode;
+		this.changeToKZT();
+		this.node = document.createElement('div');
+		this.render();
+	};
+
+	changeToKZT() {
+		this.price = this.price * this.transfer; 
 	};
 
 	render() {
-		return `
-			<div class="menu__item">
-				<img src="${this.image}" alt="vegy">
+		this.node.innerHTML = 
+			`<div class="menu__item">
+				<img src=${this.image} alt=${this.title}>
 				<h3 class="menu__item-subtitle">${this.title}</h3>
 				<div class="menu__item-descr">${this.description}</div>
 				<div class="menu__item-divider"></div>
 				<div class="menu__item-price">
 					<div class="menu__item-cost">Цена:</div>
-					<div class="menu__item-total"><span>${this.price}</span> грн/день</div>
+					<div class="menu__item-total"><span>${this.price}</span> ${this.currency}/день</div>
 				</div>
-			</div>
-		`;
-	}
-};
-
-class MenuField {
-	constructor(data) {
-		this.items = data.map((item) => new MenuItem(item));
-	};
-
-	render() {
-		return `
-			<div class="container">
-				${this.items.map((item) => item.render()).join('\n')}
-			</div>
-		`;
+			</div>`;
+		if (!this._isAppended) {this.parent.append(this.node); this._isAppended = true;}
 	};
 };
 
 document.addEventListener('DOMContentLoaded', () => {
 	console.log('DOMContentLoaded');
 	// ------------- Cards ------------
-	const menuFieldNode = document.getElementById('menu__field');
-	const MenuFieldComponent = new MenuField(menuData);
-	menuFieldNode.innerHTML = MenuFieldComponent.render();
+	const menuFieldNode = document.querySelector('#menu__field .container');
+	
+	const menuItems = menuData.map((dataItem) => {
+		return new MenuItem({
+			...dataItem,
+			parentNode: menuFieldNode
+		});
+	});
+	
+	const menuFieldTimerId = setInterval(() => {
+		menuItems.forEach((item) => {
+			item.price += 1;
+			item.render();
+		});
+	}, 1000);
 	
 	//------------- Tabs --------------
 	const tabs = document.querySelectorAll('.tabheader__item'),
