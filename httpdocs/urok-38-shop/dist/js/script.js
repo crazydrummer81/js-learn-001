@@ -119,7 +119,8 @@ class MenuItem {
     title,
     description,
     price,
-    parentNode
+    parentNode,
+    classes
   }) {
     this._isAppended = false;
     this.image = props.image;
@@ -128,6 +129,7 @@ class MenuItem {
     this.transfer = 450;
     this.price = props.price;
     this.currency = 'тг';
+    this.classes = props.classes || ['menu__item'];
     this.parent = props.parentNode;
     this.changeToKZT();
     this.node = document.createElement('div');
@@ -139,15 +141,14 @@ class MenuItem {
   }
 
   render() {
-    this.node.innerHTML = `<div class="menu__item">
-				<img src=${this.image} alt=${this.title}>
-				<h3 class="menu__item-subtitle">${this.title}</h3>
-				<div class="menu__item-descr">${this.description}</div>
-				<div class="menu__item-divider"></div>
-				<div class="menu__item-price">
-					<div class="menu__item-cost">Цена:</div>
-					<div class="menu__item-total"><span>${this.price}</span> ${this.currency}/день</div>
-				</div>
+    this.classes.forEach(className => this.node.classList.add(className));
+    this.node.innerHTML = `<img src=${this.image} alt=${this.title}>
+			<h3 class="menu__item-subtitle">${this.title}</h3>
+			<div class="menu__item-descr">${this.description}</div>
+			<div class="menu__item-divider"></div>
+			<div class="menu__item-price">
+				<div class="menu__item-cost">Цена:</div>
+				<div class="menu__item-total"><span>${this.price}</span> ${this.currency}/день</div>
 			</div>`;
 
     if (!this._isAppended) {
@@ -165,7 +166,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const menuFieldNode = document.querySelector('#menu__field .container');
   const menuItems = menuData.map(dataItem => {
     return new MenuItem({ ...dataItem,
-      parentNode: menuFieldNode
+      parentNode: menuFieldNode,
+      classes: ['menu__item']
     });
   });
   const menuFieldTimerId = setInterval(() => {
