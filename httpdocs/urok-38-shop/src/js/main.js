@@ -161,11 +161,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	// Модальное окно
 	const modalShowTrigger = document.querySelectorAll('[data-modal]'),
-			modal = document.querySelector('.modal'),
-			modalHideTrigger = modal.querySelectorAll('[data-close]');
+			modal = document.querySelector('.modal');
 
 	function show(node, blockBlody = false) {
 		node.classList.remove('hide');
+		node.classList.add('show');
 		if (blockBlody)
 			document.body.classList.add('blocked');
 		clearInterval(modalTimerId);
@@ -183,14 +183,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		});
 	});
 	
-	modalHideTrigger.forEach(button => {
-		button.addEventListener('click', () => {
-			hide(modal, true);
-		});
-	});
-
 	modal.addEventListener('click', (e) => {
-		if (e.target === modal) {
+		if (e.target === modal || e.target.getAttribute('data-close') == '') {
 			hide(modal, true);
 		};
 	});
@@ -216,8 +210,8 @@ document.addEventListener('DOMContentLoaded', () => {
 	const forms = document.querySelectorAll('form');
 
 	const message = {
-		loading: 'Загрузка',
-		success: 'Спасибо',
+		loading: 'img/preloader.gif',
+		success: 'Спасибо, мы обязательно свяжемся с вами!',
 		fail: 'Что-то пошло не так...'
 	};
 
@@ -229,10 +223,9 @@ document.addEventListener('DOMContentLoaded', () => {
 		form.addEventListener('submit', (e) => {
 			e.preventDefault();
 			
-			const statusMessage = document.createElement('div');
-			statusMessage.classList.add('status');
-			statusMessage.textContent = message.loading;
-			form.append(statusMessage);
+			const preloader = document.createElement('div');
+			preloader.classList.add('preloader');
+			form.append(preloader);
 
 			const request = new XMLHttpRequest();
 			request.open('POST', 'server.php');
@@ -250,14 +243,36 @@ document.addEventListener('DOMContentLoaded', () => {
 			request.addEventListener('load', () => {
 				if (request.status === 200) {
 					console.log(request.response);
-					statusMessage.textContent = message.success;
+					showThanksModal(message.success, 'success');
 					form.reset();
-					setTimeout(() => statusMessage.remove(), 2000);
+					preloader.remove();
 				} else {
-					statusMessage.textContent = message.fail;
+					setTimeout(() => preloader.remove(), 2000);
+					showThanksModal(message.fail, 'fail');
+					preloader.remove();
 				}
 			});
 		});
+	}
+
+	function showThanksModal(message, result = 'success') {
+		const prevModalContent = document.querySelector('.modal__content');
+		const prevModalContentHeight = prevModalContent.offsetHeight + 'px';
+		hide(prevModalContent, true);
+		const thanksModal = document.createElement('div');
+		thanksModal.classList.add('modal__content', result=='success' ? 'success' : 'fail');
+		show(thanksModal, true);
+		console.log(prevModalContentHeight);
+		thanksModal.style.minHeight = prevModalContentHeight;
+		thanksModal.innerHTML = `
+				<div class="modal__title">${message}</div>
+		`;
+
+		document.querySelector('.modal__dialog').append(thanksModal);
+		setTimeout(() => {
+			thanksModal.remove();
+			show(prevModalContent, true);
+		}, 3000);
 	}
 
 });

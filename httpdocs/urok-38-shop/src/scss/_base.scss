@@ -62,4 +62,6 @@ a {
 body.blocked {
     overflow: hidden;
 }
+.success { color: green; }
+.fail { color: red; }
 @keyframes fade{ from{opacity: 0.1} to {opacity: 1} }

@@ -60,6 +60,12 @@ a {
 body.blocked {
   overflow: hidden; }
 
+.success {
+  color: green; }
+
+.fail {
+  color: red; }
+
 @keyframes fade {
   from {
     opacity: 0.1; }
@@ -493,7 +499,8 @@ body.blocked {
   background-color: rgba(0, 0, 0, 0.5); }
   .modal__dialog {
     max-width: 500px;
-    margin: 40px auto; }
+    margin: 40px auto;
+    position: relative; }
   .modal__content {
     position: relative;
     width: 100%;
@@ -502,7 +509,13 @@ body.blocked {
     border: 1px solid rgba(0, 0, 0, 0.2);
     border-radius: 4px;
     max-height: 80vh;
-    overflow-y: auto; }
+    overflow-y: auto;
+    align-items: center;
+    justify-content: center; }
+    .modal__content.show {
+      display: flex; }
+    .modal__content.hide {
+      display: none; }
   .modal__close {
     position: absolute;
     top: 8px;
@@ -513,7 +526,8 @@ body.blocked {
     font-weight: 700;
     border: none;
     background-color: transparent;
-    cursor: pointer; }
+    cursor: pointer;
+    z-index: 100; }
   .modal__title {
     text-align: center;
     font-size: 22px;
@@ -534,5 +548,15 @@ body.blocked {
     display: block;
     width: 280px;
     margin: 0 auto; }
-  .modal.hide {
-    display: none; }
+  .modal .preloader {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: url(../img/preloader.gif) no-repeat center;
+    background-color: rgba(255, 255, 255, 0.8);
+    z-index: 50; }
