@@ -340,6 +340,7 @@ document.addEventListener('DOMContentLoaded', () => {
     form.addEventListener('submit', e => {
       e.preventDefault();
       clearTimeout(modalTimerId);
+      window.removeEventListener('scroll', showModalByScroll);
       const preloader = document.createElement('div');
       preloader.classList.add('preloader');
       form.append(preloader);
