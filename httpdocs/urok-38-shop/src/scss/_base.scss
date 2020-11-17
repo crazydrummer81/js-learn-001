@@ -64,4 +64,22 @@ body.blocked {
 }
 .success { color: green; }
 .fail { color: red; }
+.preloader {
+    position: absolute;
+    display: flex; align-items: center;justify-content: center;
+    top: 0; right: 0; bottom: 0; left: 0;
+    background: url(../img/preloader.gif) no-repeat center;
+    background-color: rgba(255,255,255,.8);
+    z-index: 50;
+}
+.thanks {
+    &__content {
+        display: flex; align-items: center; justify-content: center;
+    }
+    &__title {
+        text-transform: uppercase;
+        font-size: 1.2em;
+        text-align: center;
+    }
+}
 @keyframes fade{ from{opacity: 0.1} to {opacity: 1} }

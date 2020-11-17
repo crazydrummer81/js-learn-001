@@ -163,45 +163,56 @@ document.addEventListener('DOMContentLoaded', () => {
 	const modalShowTrigger = document.querySelectorAll('[data-modal]'),
 			modal = document.querySelector('.modal');
 
-	function show(node, blockBlody = false) {
+	function blockBody() {
+		document.body.classList.add('blocked');
+	}
+	function unBlockBody() {
+		document.body.classList.remove('blocked');
+	}
+	function show(node) {
 		node.classList.remove('hide');
 		node.classList.add('show');
-		if (blockBlody)
-			document.body.classList.add('blocked');
-		clearInterval(modalTimerId);
+		if (node.classList.contains('modal')) { clearTimeout(modalTimerId) };
 	};
 
-	function hide(node, unBlockBlody = false) {
+	function hide(node) {
+		node.classList.remove('show');
 		node.classList.add('hide');
-		if (unBlockBlody)
-			document.body.classList.remove('blocked');
 	};
 	
 	modalShowTrigger.forEach(button => {
 		button.addEventListener('click', () => {
-			show(modal, true);
+			show(modal);
+			blockBody();
 		});
 	});
 	
 	modal.addEventListener('click', (e) => {
 		if (e.target === modal || e.target.getAttribute('data-close') == '') {
-			hide(modal, true);
+			console.log(e.target);
+			hide(modal);
+			unBlockBody();
 		};
 	});
 
 	document.addEventListener('keydown', (e) => {
 		if (e.code === 'Escape' && !modal.classList.contains('hide')) {
-			hide(modal, true);
+			hide(modal);
+			unBlockBody();
 		};
 	});
 
 	// Показ попапа по времени после загрузки DOM
-	const modalTimerId = setTimeout(() => show(modal, true), 100000);
+	const modalTimerId = setTimeout(() => {
+		show(modal);
+		blockBody();
+	},	30000);
 
 	function showModalByScroll() {
 		if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
 			console.log('end');
-			show(modal, true);
+			show(modal);
+			blockBody();
 			window.removeEventListener('scroll', showModalByScroll);
 		};
 	};
@@ -222,6 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	function postData(form) {
 		form.addEventListener('submit', (e) => {
 			e.preventDefault();
+			clearTimeout(modalTimerId);
 			
 			const preloader = document.createElement('div');
 			preloader.classList.add('preloader');
@@ -243,35 +255,36 @@ document.addEventListener('DOMContentLoaded', () => {
 			request.addEventListener('load', () => {
 				if (request.status === 200) {
 					console.log(request.response);
-					showThanksModal(message.success, 'success');
+					showThanksModal(e.target, message.success, 'success');
 					form.reset();
 					preloader.remove();
 				} else {
 					setTimeout(() => preloader.remove(), 2000);
-					showThanksModal(message.fail, 'fail');
+					showThanksModal(e.target, message.fail, 'fail');
 					preloader.remove();
 				}
 			});
 		});
 	}
 
-	function showThanksModal(message, result = 'success') {
-		const prevModalContent = document.querySelector('.modal__content');
-		const prevModalContentHeight = prevModalContent.offsetHeight + 'px';
-		hide(prevModalContent, true);
+	function showThanksModal(target, message, result = 'success') {
+		console.log(target);
+		// const target = document.querySelector('.modal__content');
+		const targetHeight = target.offsetHeight + 'px';
+		hide(target);
 		const thanksModal = document.createElement('div');
-		thanksModal.classList.add('modal__content', result=='success' ? 'success' : 'fail');
-		show(thanksModal, true);
-		console.log(prevModalContentHeight);
-		thanksModal.style.minHeight = prevModalContentHeight;
+		thanksModal.classList.add('thanks__content', result=='success' ? 'success' : 'fail');
+		show(thanksModal);
+		console.log(targetHeight);
+		thanksModal.style.minHeight = targetHeight;
 		thanksModal.innerHTML = `
-				<div class="modal__title">${message}</div>
+				<div class="thanks__title">${message}</div>
 		`;
 
-		document.querySelector('.modal__dialog').append(thanksModal);
+		target.parentNode.append(thanksModal);
 		setTimeout(() => {
 			thanksModal.remove();
-			show(prevModalContent, true);
+			show(target);
 		}, 3000);
 	}
 
