@@ -344,41 +344,41 @@ document.addEventListener('DOMContentLoaded', () => {
       const preloader = document.createElement('div');
       preloader.classList.add('preloader');
       form.append(preloader);
-      const request = new XMLHttpRequest();
-      request.open('POST', 'server.php');
-      request.setRequestHeader('Content-type', 'application/json');
       const formData = new FormData(form);
       const object = {};
       formData.forEach(function (value, key) {
         object[key] = value;
       });
-      const json = JSON.stringify(object);
-      request.send(json);
-      request.addEventListener('load', () => {
-        if (request.status === 200) {
-          console.log(request.response);
-          showThanksModal(e.target, message.success, 'success');
-          form.reset();
-          preloader.remove();
-        } else {
-          setTimeout(() => preloader.remove(), 2000);
-          showThanksModal(e.target, message.fail, 'fail');
-          preloader.remove();
-        }
+      fetch('server.php', {
+        method: 'POST',
+        headers: {
+          'Content-type': 'application/json'
+        },
+        body: JSON.stringify(object)
+      }).then(data => data.json()).then(data => {
+        console.log(data);
+        showThanksModal(e.target, message.success, 'success');
+      }).catch(() => {
+        showThanksModal(e.target, message.fail, 'fail');
+        console.error('Ошибка сервера');
+      }).finally(() => {
+        preloader.remove();
+        form.reset();
       });
     });
   }
 
   function showThanksModal(target, message, result = 'success') {
-    console.log(target); // const target = document.querySelector('.modal__content');
-
-    const targetHeight = target.offsetHeight + 'px';
+    console.log(target);
+    const targetHeight = target.offsetHeight + 'px',
+          targetWidth = target.offsetWidth + 'px';
     hide(target);
     const thanksModal = document.createElement('div');
     thanksModal.classList.add('thanks__content', result == 'success' ? 'success' : 'fail');
     show(thanksModal);
     console.log(targetHeight);
     thanksModal.style.minHeight = targetHeight;
+    thanksModal.style.minWidth = targetWidth;
     thanksModal.innerHTML = `
 				<div class="thanks__title">${message}</div>
 		`;
@@ -388,6 +388,8 @@ document.addEventListener('DOMContentLoaded', () => {
       show(target);
     }, 3000);
   }
+
+  ;
 });
 
 function getZero(num) {

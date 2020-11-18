@@ -1,5 +1,5 @@
 <?php
 	$_POST = json_decode(file_get_contents("php://input"), true);
 	sleep(1);
-	echo var_dump($_POST);
+	echo json_encode($_POST);
 ?>

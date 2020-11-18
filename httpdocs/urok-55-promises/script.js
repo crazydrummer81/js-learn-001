@@ -61,3 +61,26 @@ obj.onclick = () => {
 document.append(obj);
 
 
+const div = document.createElement('div');
+div.classList.add('box');
+const div2 = document.createElement('div');
+div2.classList.add('box2');
+div.append(div2);
+document.body.append(div);
+
+setTimeout(function() {
+	// console.log(this);
+	div2.classList.add('active');
+}, 1500);
+
+div2.addEventListener('click', function(e) {
+	console.log(e.target);
+	console.log(this);
+	this.classList.toggle('active');
+});
+
+window.addEventListener('click', function(e) {
+	e.preventDefault();
+});
+
+

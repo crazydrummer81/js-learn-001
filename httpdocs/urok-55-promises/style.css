@@ -1,0 +1,17 @@
+.box {
+	width: 200px;
+	height: 100px;
+	background: green;
+	margin-top: 20px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.box2 {
+	width: 50%;
+	height: 50%;
+	background: yellow;
+}
+.active {
+	border: 2px solid red;
+}
