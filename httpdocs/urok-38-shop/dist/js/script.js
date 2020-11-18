@@ -349,7 +349,7 @@ document.addEventListener('DOMContentLoaded', () => {
       formData.forEach(function (value, key) {
         object[key] = value;
       });
-      fetch('server1.php', {
+      fetch('server.php', {
         method: 'POST',
         headers: {
           'Content-type': 'application/json'
@@ -370,13 +370,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function showThanksModal(target, message, result = 'success') {
     console.log(target);
-    const targetHeight = target.offsetHeight + 'px';
+    const targetHeight = target.offsetHeight + 'px',
+          targetWidth = target.offsetWidth + 'px';
     hide(target);
     const thanksModal = document.createElement('div');
     thanksModal.classList.add('thanks__content', result == 'success' ? 'success' : 'fail');
     show(thanksModal);
     console.log(targetHeight);
     thanksModal.style.minHeight = targetHeight;
+    thanksModal.style.minWidth = targetWidth;
     thanksModal.innerHTML = `
 				<div class="thanks__title">${message}</div>
 		`;
@@ -388,15 +390,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   ;
-  fetch('https://jsonplaceholder.typicode.com/posts', {
-    method: 'POST',
-    body: JSON.stringify({
-      name: 'Alex'
-    }),
-    headers: {
-      'Content-type': 'application/json'
-    }
-  }).then(response => response.json()).then(json => console.log(json));
 });
 
 function getZero(num) {
