@@ -287,7 +287,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		}, 3000);
 	};
 
-	fetch('../json/db.json')
+	//! Запустить json-server командой "json-server db.json"
+	fetch('http://localhost:3000/menu')
 		.then(data => data.json())
 		.then(res => console.log(res));
 
