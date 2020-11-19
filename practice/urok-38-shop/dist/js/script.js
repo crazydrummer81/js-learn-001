@@ -390,6 +390,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   ;
+  fetch('../json/db.json').then(data => data.json()).then(res => console.log(res));
 });
 
 function getZero(num) {

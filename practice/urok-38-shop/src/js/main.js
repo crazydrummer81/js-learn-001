@@ -287,6 +287,10 @@ document.addEventListener('DOMContentLoaded', () => {
 		}, 3000);
 	};
 
+	fetch('../json/db.json')
+		.then(data => data.json())
+		.then(res => console.log(res));
+
 });
 
 function getZero(num) {
