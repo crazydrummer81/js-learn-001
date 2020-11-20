@@ -97,16 +97,10 @@
 
 
 class MenuItem {
-  constructor(props = {
-    image,
-    title,
-    description,
-    price,
-    parentNode,
-    classes
-  }) {
+  constructor(props = {}) {
     this._isAppended = false;
     this.image = props.image;
+    this.altimg = props.altimg;
     this.title = props.title;
     this.description = props.description;
     this.transfer = 450;
@@ -125,7 +119,7 @@ class MenuItem {
 
   render() {
     this.classes.forEach(className => this.node.classList.add(className));
-    this.node.innerHTML = `<img src=${this.image} alt=${this.title}>
+    this.node.innerHTML = `<img src=${this.image} alt=${this.altimg}>
 			<h3 class="menu__item-subtitle">${this.title}</h3>
 			<div class="menu__item-descr">${this.description}</div>
 			<div class="menu__item-divider"></div>
@@ -159,32 +153,27 @@ document.addEventListener('DOMContentLoaded', () => {
     return await res.json();
   };
 
-  let menuItemsPromise = getResource('http://localhost:3000/menu').then(data => {
-    return data.map(obj => {
+  let menuItemsPromise = getResource('http://localhost:3000/menu') // Output cards
+  .then(data => {
+    return data.map(({
+      img,
+      altimg,
+      title,
+      descr,
+      price
+    }) => {
       return new MenuItem({
-        image: obj.img,
-        title: obj.title,
-        description: obj.descr,
-        price: obj.price,
+        image: img,
+        altimg: altimg,
+        title: title,
+        description: descr,
+        price: price,
         parentNode: menuFieldNode,
         classes: ['menu__item']
       });
     });
   });
-  menuItemsPromise.then(data => console.log(data)); // const menuItems = menuData.map((dataItem) => {
-  // return new MenuItem({
-  // 	...dataItem,
-  // 	parentNode: menuFieldNode,
-  // 	classes: ['menu__item']
-  // });
-  // const menuFieldTimerId = setInterval(() => {
-  // 	// Это так ради практики
-  // 	menuItems.forEach((item) => {
-  // 		item.price += 1;
-  // 		item.render();
-  // 	});
-  // }, 1000);
-  //------------- Tabs --------------
+  menuItemsPromise.then(data => console.log(data)); //------------- Tabs --------------
 
   const tabs = document.querySelectorAll('.tabheader__item'),
         tabsContent = document.querySelectorAll('.tabcontent'),
@@ -340,7 +329,8 @@ document.addEventListener('DOMContentLoaded', () => {
     loading: 'img/preloader.gif',
     success: 'Спасибо, мы обязательно свяжемся с вами!',
     fail: 'Что-то пошло не так...'
-  };
+  }; // ----- Отправка формы -----
+
   forms.forEach(form => {
     bindPostData(form);
   });
@@ -365,7 +355,11 @@ document.addEventListener('DOMContentLoaded', () => {
       preloader.classList.add('preloader');
       form.append(preloader);
       const formData = new FormData(form);
-      const json = JSON.stringify(Object.fromEntries(formData.entries()));
+      console.log(formData);
+      const currentDate = new Date().toString();
+      const json = JSON.stringify({ ...Object.fromEntries(formData.entries()),
+        date: currentDate
+      });
       postData('http://localhost:3000/requests', json).then(data => {
         console.log(data);
         showThanksModal(e.target, message.success, 'success');
