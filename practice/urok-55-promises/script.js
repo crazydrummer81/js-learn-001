@@ -51,6 +51,15 @@ Promise.race([test(1000), test(2000)]).then(() => {
 	console.log('Race');
 });
 
+const obj = document.createElement('div');
+obj.textContent = 'Some text';
+
+obj.onclick = () => {
+	console.log('div');
+};
+
+document.append(obj);
+
 
 const div = document.createElement('div');
 div.classList.add('box');

@@ -1,26 +1,5 @@
 "use strict";
 
-const menuData = [
-	{
-		image: 'img/tabs/vegy.jpg', 
-		title: 'Меню “Фитнес”', 
-		description: 'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!', 
-		price: 22
-	},
-	{
-		image: 'img/tabs/elite.jpg', 
-		title: 'Меню “Премиум”', 
-		description: 'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!', 
-		price: 55
-	},
-	{
-		image: 'img/tabs/post.jpg', 
-		title: 'Меню “Постное”', 
-		description: 'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков. ', 
-		price: 43
-	}
-];
-
 class MenuItem {
 	constructor(props = {image, title, description, price, parentNode, classes}) {
 		this._isAppended = false;
@@ -61,20 +40,46 @@ document.addEventListener('DOMContentLoaded', () => {
 	// ------------- Cards ------------
 	const menuFieldNode = document.querySelector('#menu__field .container');
 	
-	const menuItems = menuData.map((dataItem) => {
-		return new MenuItem({
-			...dataItem,
-			parentNode: menuFieldNode,
-			classes: ['menu__item']
+	const getResource = async (url) => {
+		const res = await fetch(url);
+
+		if (!res.ok) {
+			throw new Error(`Could not fetch ${url}, status: ${res.status}`);
+		};
+
+		return await res.json();
+	};
+
+	let menuItemsPromise = getResource('http://localhost:3000/menu')
+		.then(data => {
+			return data.map(obj => {
+				return new MenuItem({
+					image: obj.img, 
+					title: obj.title,
+					description: obj.descr,
+					price: obj.price,
+					parentNode: menuFieldNode,
+					classes: ['menu__item']
+				});
+			});
 		});
-	});
+
+	menuItemsPromise.then(data => console.log(data));
+		
+		// const menuItems = menuData.map((dataItem) => {
+		// return new MenuItem({
+		// 	...dataItem,
+		// 	parentNode: menuFieldNode,
+		// 	classes: ['menu__item']
+		// });
 	
-	const menuFieldTimerId = setInterval(() => {
-		menuItems.forEach((item) => {
-			item.price += 1;
-			item.render();
-		});
-	}, 1000);
+	// const menuFieldTimerId = setInterval(() => {
+	// 	// Это так ради практики
+	// 	menuItems.forEach((item) => {
+	// 		item.price += 1;
+	// 		item.render();
+	// 	});
+	// }, 1000);
 	
 	//------------- Tabs --------------
 	const tabs = document.querySelectorAll('.tabheader__item'),
@@ -227,10 +232,20 @@ document.addEventListener('DOMContentLoaded', () => {
 	};
 
 	forms.forEach(form => {
-		postData(form);
+		bindPostData(form);
 	});
 
-	function postData(form) {
+	const postData = async (url, data) => {
+		const res = await fetch(url, {
+			method: 'POST',
+			headers: {'Content-type': 'application/json'},
+			body: data
+		});
+
+		return await res.json();
+	};
+
+	function bindPostData(form) {
 		form.addEventListener('submit', (e) => {
 			e.preventDefault();
 			clearTimeout(modalTimerId);
@@ -241,26 +256,19 @@ document.addEventListener('DOMContentLoaded', () => {
 			form.append(preloader);
 
 			const formData = new FormData(form);
-			const object = {};
-			formData.forEach(function(value, key) {
-				object[key] = value;
-			});
+			const json = JSON.stringify(Object.fromEntries(formData.entries()));
 
-			fetch('server.php', {
-				method: 'POST',
-				headers: {'Content-type': 'application/json'},
-				body: JSON.stringify(object)
-			}).then(data => data.json())
-			.then(data => {
-				console.log(data);
-				showThanksModal(e.target, message.success, 'success');
-			}).catch(() => {
-				showThanksModal(e.target, message.fail, 'fail');
-				console.error('Ошибка сервера');
-			}).finally(() => {
-				preloader.remove();
-				form.reset();
-			});
+			postData('http://localhost:3000/requests', json)
+				.then(data => {
+					console.log(data);
+					showThanksModal(e.target, message.success, 'success');
+				}).catch(() => {
+					showThanksModal(e.target, message.fail, 'fail');
+					console.error('Ошибка сервера');
+				}).finally(() => {
+					preloader.remove();
+					form.reset();
+				});
 
 		});
 	}
@@ -286,6 +294,11 @@ document.addEventListener('DOMContentLoaded', () => {
 			show(target);
 		}, 3000);
 	};
+
+	//! Запустить json-server командой "npx json-server db.json"
+	fetch('http://localhost:3000/menu')
+		.then(data => data.json())
+		.then(res => console.log(res));
 
 });
 
