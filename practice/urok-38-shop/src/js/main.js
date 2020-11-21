@@ -1,5 +1,7 @@
 "use strict";
 
+const { data } = require("autoprefixer");
+
 class MenuItem {
 	constructor(props = {}) {
 		this._isAppended = false;
@@ -40,21 +42,28 @@ document.addEventListener('DOMContentLoaded', () => {
 	console.log('DOMContentLoaded');
 	// ------------- Cards ------------
 	const menuFieldNode = document.querySelector('#menu__field .container');
-	
-	const getResource = async (url) => {
-		const res = await fetch(url);
+	const dbUrl = 'http://localhost:3000/menu';
+	const sliderUrl = 'http://localhost:3000/slider';
 
-		if (!res.ok) {
-			throw new Error(`Could not fetch ${url}, status: ${res.status}`);
-		};
+	// ------------- Begin Нативный метод получения данных
+	// const getResource = async (url) => {
+	// 	const res = await fetch(url);
 
-		return await res.json();
-	};
+	// 	if (!res.ok) {
+	// 		throw new Error(`Could not fetch ${url}, status: ${res.status}`);
+	// 	};
 
-	let menuItemsPromise = getResource('http://localhost:3000/menu')
+	// 	return await res.json();
+	// };
+
+	// let menuItemsPromise = getResource('http://localhost:3000/menu')
+	// ------------- End Нативный метод получения данных
+
+	// Получение данных библиотекой axios
+	let menuItemsPromise = axios.get(dbUrl)
 		// Output cards
 		.then(data => {
-			return data.map(({img, altimg, title, descr, price}) => {
+			return data.data.map(({img, altimg, title, descr, price}) => {
 				return new MenuItem({
 					image: img,
 					altimg: altimg,
@@ -67,8 +76,53 @@ document.addEventListener('DOMContentLoaded', () => {
 			});
 		});
 
-	menuItemsPromise.then(data => console.log(data));
+	// menuItemsPromise.then(data => console.log(data));
+
+	// ------------ Slider ------------
+	const slider = document.querySelector('.offer__slider'),
+			sliderCounter           = slider.querySelector('.offer__slider-counter'),
+			sliderWrapper           = slider.querySelector('.offer__slider-wrapper'),
+			sliderCounterButtonPrev = sliderCounter.querySelector('.offer__slider-prev'),
+			sliderCounterButtonNext = sliderCounter.querySelector('.offer__slider-next'),
+			sliderCounterCurrent    = sliderCounter.querySelector('#current'),
+			sliderCounterTotal      = sliderCounter.querySelector('#total');
+
+	axios.get(sliderUrl).then(data => data.data).then(sliderData => {
+		let currentIndex = 0;
+		const slides = sliderData.map((slide) => {
+			const div = document.createElement('div');
+			div.classList.add('offer__slide');
+			div.innerHTML = `<img src="${slide.img}" alt="${slide.alt}" loading="lazy">`;
+			sliderWrapper.append(div);
+			return div;
+		});
+		const currentIndexes = slides.map((slide, i) =>{
+			const span = document.createElement('span');
+			span.textContent = pad(i+1, 2);
+			sliderCounterCurrent.append(span);
+			return span;
+		});
+		function setCurrent(index) {
+			slides.forEach((slide, i) => {
+				slide.classList.remove('active');
+				currentIndexes[i].classList.remove('active');
+			});
+			slides[index].classList.add('active');
+			currentIndexes[index].classList.add('active');
+		};
+		setCurrent(0);
+		sliderCounterTotal.textContent = pad(slides.length, 2);
+		sliderCounterButtonNext.addEventListener('click', function(e) {
+			if (++currentIndex > slides.length-1) currentIndex = 0;
+			setCurrent(currentIndex);
+		});
+		sliderCounterButtonPrev.addEventListener('click', function(e) {
+			if (--currentIndex < 0) currentIndex = slides.length-1;
+			setCurrent(currentIndex);
+		});
 		
+	});
+	
 	//------------- Tabs --------------
 	const tabs = document.querySelectorAll('.tabheader__item'),
 			tabsContent = document.querySelectorAll('.tabcontent'),
@@ -288,13 +342,13 @@ document.addEventListener('DOMContentLoaded', () => {
 		}, 3000);
 	};
 
-	//! Запустить json-server командой "npx json-server db.json"
-	fetch('http://localhost:3000/menu')
-		.then(data => data.json())
-		.then(res => console.log(res));
-
 });
 
 function getZero(num) {
 	if (num >= 0 && num < 10) { return `0${num}`; } else {return num;}
-}
+};
+function pad(num, size) {
+	num = num.toString();
+	while (num.length < size) num = "0" + num;
+	return num;
+};
