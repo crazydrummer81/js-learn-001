@@ -31015,14 +31015,26 @@ document.addEventListener('DOMContentLoaded', () => {
   axios.get(sliderUrl).then(data => data.data).then(sliderData => {
     let currentIndex = 0;
     const slides = sliderData.map(slide => {
-      const div = document.createElement('div');
-      div.classList.add('offer__slide');
+      const div = create('div', 'offer__slide');
       div.innerHTML = `<img src="${slide.img}" alt="${slide.alt}" loading="lazy">`;
       sliderWrapper.append(div);
       return div;
+    }); // Nav dots
+
+    const sliderNav = create('ul', 'carousel-indicators');
+    const sliderNavDots = slides.map((slide, i) => {
+      const dot = create('li', 'dot');
+      dot.setAttribute('data-index', i);
+      sliderNav.append(dot);
+      return dot;
+    });
+    slider.append(sliderNav);
+    sliderNav.addEventListener('click', function (e) {
+      console.dir(e.target);
+      setCurrent(e.target.dataset.index);
     });
     const currentIndexes = slides.map((slide, i) => {
-      const span = document.createElement('span');
+      const span = create('span');
       span.textContent = pad(i + 1, 2);
       sliderCounterCurrent.append(span);
       return span;
@@ -31032,9 +31044,11 @@ document.addEventListener('DOMContentLoaded', () => {
       slides.forEach((slide, i) => {
         slide.classList.remove('active');
         currentIndexes[i].classList.remove('active');
+        sliderNavDots[i].classList.remove('active');
       });
       slides[index].classList.add('active');
       currentIndexes[index].classList.add('active');
+      sliderNavDots[index].classList.add('active');
     }
 
     ;
@@ -31226,8 +31240,7 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       clearTimeout(modalTimerId);
       window.removeEventListener('scroll', showModalByScroll);
-      const preloader = document.createElement('div');
-      preloader.classList.add('preloader');
+      const preloader = create('div', 'preloader');
       form.append(preloader);
       const formData = new FormData(form);
       console.log(formData);
@@ -31253,8 +31266,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const targetHeight = target.offsetHeight + 'px',
           targetWidth = target.offsetWidth + 'px';
     hide(target);
-    const thanksModal = document.createElement('div');
-    thanksModal.classList.add('thanks__content', result == 'success' ? 'success' : 'fail');
+    const thanksModal = create('div', 'thanks__content', result == 'success' ? 'success' : 'fail');
     show(thanksModal);
     console.log(targetHeight);
     thanksModal.style.minHeight = targetHeight;
@@ -31291,6 +31303,12 @@ function pad(num, size) {
 }
 
 ;
+
+function create(tag = 'div', classList = '') {
+  const element = document.createElement(tag);
+  if (classList) element.classList.add(classList);
+  return element;
+}
 
 /***/ }),
 
