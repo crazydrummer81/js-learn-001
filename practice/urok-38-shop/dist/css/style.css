@@ -642,3 +642,6 @@ body.blocked {
     display: block;
     width: 280px;
     margin: 0 auto; }
+
+.has-error {
+  border: 1px solid red; }
