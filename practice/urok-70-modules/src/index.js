@@ -1,4 +1,6 @@
 import _ from 'lodash';
+// import * as data from './functions';
+import sayHi from './functions'
 
 function component() {
 	const element = document.createElement('div');
@@ -10,3 +12,6 @@ function component() {
  }
  
  document.body.appendChild(component());
+
+//  console.log(data.one, data.two);
+ sayHi()
