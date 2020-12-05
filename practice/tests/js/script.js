@@ -1,36 +1,17 @@
-"use strict";
+// "use strict";
 
-// const div = document.querySelector('.test1');
-// console.dir(div);
+links = document.querySelectorAll('a');
+// console.log(links)
 
-// div.style.cssText = 'color: yellow; display: flex;';
+linksArr = Array.from(links);
 
-// async function f() {
-// 	let r = await Math.max(1,2);
-// 	console.log(r);
-// }
+tlinks = linksArr.map(item => {
+	// console.log(item.innerText)
+	if (item.innerText.indexOf('Вход на бесплатный тренинг') > -1) {
+		// return item;
+		console.log(item);
+	};
+});
 
-// console.log(f());
-class A {
-	res = {};
-	constructor(url) {
-		fetch(url)
-			.then(data => data.json())
-			.then(json => this.res = json)
-	}
-}
-
-const a = new A('https://jsonplaceholder.typicode.com/todos/1');
-
-console.log('a', a);
-setTimeout(() => console.log('a.res', a.res), 500)
-console.log('a.res', a.res);
-
-
-
-
-
-
-
-
+// console.log(tlinks);
 

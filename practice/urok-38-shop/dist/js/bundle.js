@@ -30921,34 +30921,32 @@ module.exports = g;
 "use strict";
 
 
-const {
-  data
-} = __webpack_require__(/*! autoprefixer */ "./node_modules/autoprefixer/lib/autoprefixer.js");
+const { data } = __webpack_require__(/*! autoprefixer */ "./node_modules/autoprefixer/lib/autoprefixer.js");
 
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('DOMContentLoaded');
+	console.log('DOMContentLoaded');
+	const tabs   = __webpack_require__(/*! ./modules/tabs */ "./src/js/modules/tabs.js"),
+	      modal  = __webpack_require__(/*! ./modules/modal */ "./src/js/modules/modal.js"),
+	      calc   = __webpack_require__(/*! ./modules/calc */ "./src/js/modules/calc.js"),
+	      cards  = __webpack_require__(/*! ./modules/cards */ "./src/js/modules/cards.js"),
+	      slider = __webpack_require__(/*! ./modules/slider */ "./src/js/modules/slider.js"),
+	      forms  = __webpack_require__(/*! ./modules/forms */ "./src/js/modules/forms.js"),
+	      timer  = __webpack_require__(/*! ./modules/timer */ "./src/js/modules/timer.js");
 
-  const tabs = __webpack_require__(/*! ./modules/tabs */ "./src/js/modules/tabs.js"),
-        modal = __webpack_require__(/*! ./modules/modal */ "./src/js/modules/modal.js"),
-        calc = __webpack_require__(/*! ./modules/calc */ "./src/js/modules/calc.js"),
-        cards = __webpack_require__(/*! ./modules/cards */ "./src/js/modules/cards.js"),
-        slider = __webpack_require__(/*! ./modules/slider */ "./src/js/modules/slider.js"),
-        forms = __webpack_require__(/*! ./modules/forms */ "./src/js/modules/forms.js"),
-        timer = __webpack_require__(/*! ./modules/timer */ "./src/js/modules/timer.js");
+	tabs();
+	modal();
+	calc();
+	cards();
+	slider();
+	forms();
+	timer();
 
-  tabs();
-  modal();
-  calc();
-  cards();
-  slider();
-  forms();
-  timer();
 });
 
 function create(tag = 'div', classList = '') {
-  const element = document.createElement(tag);
-  if (classList) element.classList.add(classList);
-  return element;
+	const element = document.createElement(tag);
+	if (classList) element.classList.add(classList);
+	return element;
 }
 
 /***/ }),
@@ -30961,142 +30959,118 @@ function create(tag = 'div', classList = '') {
 /***/ (function(module, exports) {
 
 function calc() {
-  const result = document.querySelector('.calculating__result span');
-  let sex, height, weight, age, ratio;
+	const result = document.querySelector('.calculating__result span');
+	
+	let sex, height, weight, age, ratio;
+	
+	if (localStorage.getItem('sex')) {
+		sex = localStorage.getItem('sex');
+	} else {
+		const sexDefaultNode = document.querySelector('#gender .calculating__choose-item.calculating__choose-item_active');
+		sex = sexDefaultNode.id;
+		// sex = 'female';
+	};
+	
+	if (localStorage.getItem('ratio')) {
+		ratio = +localStorage.getItem('ratio');
+	} else {
+		const ratioDefaultNode = document.querySelector('.calculating__choose_big .calculating__choose-item.calculating__choose-item_active');
+		ratio = +ratioDefaultNode.dataset.ratio;
+		// ratio = 1.375;
+	};
 
-  if (localStorage.getItem('sex')) {
-    sex = localStorage.getItem('sex');
-  } else {
-    const sexDefaultNode = document.querySelector('#gender .calculating__choose-item.calculating__choose-item_active');
-    sex = sexDefaultNode.id; // sex = 'female';
-  }
+	console.log('sex', sex);
+	
+	function calcTotal() {
+		console.log('calcTotal');
+		if (!sex || !height || !weight || !age || !ratio) {
+			result.textContent = '____';
+			return;
+		}
+		if (sex === 'female') {
+			result.textContent = Math.round((447.6 + (9.2 * weight) + (3.1 * height) - (4.3 * age)) * ratio);
+		} else
+		if (sex === 'male') {
+			result.textContent = Math.round((88.36 + (13.4 * weight) + (4.8 * height) - (5.7 * age)) * ratio);
+		}
+	};
+	
 
-  ;
+	function getStaticInformation(selector, activeClass) {
+		const elements = document.querySelectorAll(selector);
 
-  if (localStorage.getItem('ratio')) {
-    ratio = +localStorage.getItem('ratio');
-  } else {
-    const ratioDefaultNode = document.querySelector('.calculating__choose_big .calculating__choose-item.calculating__choose-item_active');
-    ratio = +ratioDefaultNode.dataset.ratio; // ratio = 1.375;
-  }
+		elements.forEach(element => {
+			element.addEventListener('click', function(e) {
+				if (e.target.getAttribute('data-ratio')) {
+					ratio = +e.target.getAttribute('data-ratio');
+					localStorage.setItem('ratio', ratio);
+				} else {
+					sex = e.target.id;
+					localStorage.setItem('sex', sex);
+				}
+	
+				elements.forEach(elem => {
+					elem.classList.remove(activeClass);
+				});
+	
+				e.target.classList.add(activeClass);
 
-  ;
-  console.log('sex', sex);
+				calcTotal();
+			});
+		});
+	
+	}
 
-  function calcTotal() {
-    console.log('calcTotal');
+	function initLocalSettings(selector, activeClass) {
+		const elements = document.querySelectorAll(selector);
+		elements.forEach(elem => {
+			console.log('elem.classList', elem.classList);
+			elem.classList.remove(activeClass);
+			if (elem.getAttribute('id') === sex) {
+				elem.classList.add(activeClass);
+			};
+			if (+elem.getAttribute('data-ratio') === ratio) {
+				elem.classList.add(activeClass);
+			};
+		});
+	}
 
-    if (!sex || !height || !weight || !age || !ratio) {
-      result.textContent = '____';
-      return;
-    }
+	getStaticInformation('#gender div', 'calculating__choose-item_active');
+	getStaticInformation('.calculating__choose_big div', 'calculating__choose-item_active');
+	initLocalSettings('#gender div', 'calculating__choose-item_active');
+	initLocalSettings('.calculating__choose_big div', 'calculating__choose-item_active');
+	calcTotal();
 
-    if (sex === 'female') {
-      result.textContent = Math.round((447.6 + 9.2 * weight + 3.1 * height - 4.3 * age) * ratio);
-    } else if (sex === 'male') {
-      result.textContent = Math.round((88.36 + 13.4 * weight + 4.8 * height - 5.7 * age) * ratio);
-    }
-  }
+	function getDynamicInformation(selector) {
+		const input = document.querySelector(selector);
 
-  ;
+		input.addEventListener('input', function(e) {
 
-  function getStaticInformation(selector, activeClass) {
-    const elements = document.querySelectorAll(selector);
-    elements.forEach(element => {
-      element.addEventListener('click', function (e) {
-        if (e.target.getAttribute('data-ratio')) {
-          ratio = +e.target.getAttribute('data-ratio');
-          localStorage.setItem('ratio', ratio);
-        } else {
-          sex = e.target.id;
-          localStorage.setItem('sex', sex);
-        }
+			if (input.value.match(/\D/g)) {
+				input.classList.add('has-error');
+			} else {
+				input.classList.remove('has-error');
+			}
 
-        elements.forEach(elem => {
-          elem.classList.remove(activeClass);
-        });
-        e.target.classList.add(activeClass);
-        calcTotal();
-      });
-    });
-  }
+			switch(input.getAttribute('id')) {
+				case 'height':
+					height = +input.value;
+					break;
+				case 'weight':
+					weight = +input.value;
+					break;
+				case 'age':
+					age = +input.value;
+					break;
+			}
+			calcTotal();
+		});
+	}
+	getDynamicInformation('#height');
+	getDynamicInformation('#weight');
+	getDynamicInformation('#age');
 
-  function initLocalSettings(selector, activeClass) {
-    const elements = document.querySelectorAll(selector);
-    elements.forEach(elem => {
-      console.log('elem.classList', elem.classList);
-      elem.classList.remove(activeClass);
 
-      if (elem.getAttribute('id') === sex) {
-        elem.classList.add(activeClass);
-      }
-
-      ;
-
-      if (+elem.getAttribute('data-ratio') === ratio) {
-        elem.classList.add(activeClass);
-      }
-
-      ;
-    });
-  }
-
-  getStaticInformation('#gender div', 'calculating__choose-item_active');
-  getStaticInformation('.calculating__choose_big div', 'calculating__choose-item_active');
-  initLocalSettings('#gender div', 'calculating__choose-item_active');
-  initLocalSettings('.calculating__choose_big div', 'calculating__choose-item_active');
-  calcTotal();
-
-  function getDynamicInformation(selector) {
-    const input = document.querySelector(selector);
-    input.addEventListener('input', function (e) {
-      if (input.value.match(/\D/g)) {
-        input.classList.add('has-error');
-      } else {
-        input.classList.remove('has-error');
-      }
-
-      switch (input.getAttribute('id')) {
-        case 'height':
-          height = +input.value;
-          break;
-
-        case 'weight':
-          weight = +input.value;
-          break;
-
-        case 'age':
-          age = +input.value;
-          break;
-      }
-
-      calcTotal();
-    });
-  }
-
-  getDynamicInformation('#height');
-  getDynamicInformation('#weight');
-  getDynamicInformation('#age');
-
-  function getZero(num) {
-    if (num >= 0 && num < 10) {
-      return `0${num}`;
-    } else {
-      return num;
-    }
-  }
-
-  ;
-
-  function pad(num, size) {
-    num = num.toString();
-
-    while (num.length < size) num = "0" + num;
-
-    return num;
-  }
-
-  ;
 }
 
 module.exports = calc;
@@ -31111,31 +31085,32 @@ module.exports = calc;
 /***/ (function(module, exports) {
 
 function cards() {
-  // ------------- Cards ------------
-  class MenuItem {
-    constructor(props = {}) {
-      this._isAppended = false;
-      this.image = props.image;
-      this.altimg = props.altimg;
-      this.title = props.title;
-      this.description = props.description;
-      this.transfer = 450;
-      this.price = props.price;
-      this.currency = 'тг';
-      this.classes = props.classes || ['menu__item'];
-      this.parent = props.parentNode;
-      this.changeToKZT();
-      this.node = document.createElement('div');
-      this.render();
-    }
-
-    changeToKZT() {
-      this.price = this.price * this.transfer;
-    }
-
-    render() {
-      this.classes.forEach(className => this.node.classList.add(className));
-      this.node.innerHTML = `<img src=${this.image} alt=${this.altimg}>
+	// ------------- Cards ------------
+	class MenuItem {
+		constructor(props = {}) {
+			this._isAppended = false;
+			this.image = props.image;
+			this.altimg = props.altimg;
+			this.title = props.title;
+			this.description = props.description;
+			this.transfer = 450;
+			this.price = props.price;
+			this.currency = 'тг';
+			this.classes = props.classes || ['menu__item'];
+			this.parent = props.parentNode;
+			this.changeToKZT();
+			this.node = document.createElement('div');
+			this.render();
+		};
+	
+		changeToKZT() {
+			this.price = this.price * this.transfer; 
+		};
+	
+		render() {
+			this.classes.forEach(className => this.node.classList.add(className));
+			this.node.innerHTML = 
+				`<img src=${this.image} alt=${this.altimg}>
 				<h3 class="menu__item-subtitle">${this.title}</h3>
 				<div class="menu__item-descr">${this.description}</div>
 				<div class="menu__item-divider"></div>
@@ -31143,50 +31118,45 @@ function cards() {
 					<div class="menu__item-cost">Цена:</div>
 					<div class="menu__item-total"><span>${this.price}</span> ${this.currency}/день</div>
 				</div>`;
+			if (!this._isAppended) {this.parent.append(this.node); this._isAppended = true;}
+		};
+	};
 
-      if (!this._isAppended) {
-        this.parent.append(this.node);
-        this._isAppended = true;
-      }
-    }
+	const menuFieldNode = document.querySelector('#menu__field .container');
+	const dbUrl = 'http://localhost:3000/menu';
 
-  }
+	// ------------- Begin Нативный метод получения данных
+	// const getResource = async (url) => {
+	// 	const res = await fetch(url);
 
-  ;
-  const menuFieldNode = document.querySelector('#menu__field .container');
-  const dbUrl = 'http://localhost:3000/menu';
-  const sliderUrl = 'http://localhost:3000/slider'; // ------------- Begin Нативный метод получения данных
-  // const getResource = async (url) => {
-  // 	const res = await fetch(url);
-  // 	if (!res.ok) {
-  // 		throw new Error(`Could not fetch ${url}, status: ${res.status}`);
-  // 	};
-  // 	return await res.json();
-  // };
-  // let menuItemsPromise = getResource('http://localhost:3000/menu')
-  // ------------- End Нативный метод получения данных
-  // Получение данных библиотекой axios
+	// 	if (!res.ok) {
+	// 		throw new Error(`Could not fetch ${url}, status: ${res.status}`);
+	// 	};
 
-  let menuItemsPromise = axios.get(dbUrl) // Output cards
-  .then(data => {
-    return data.data.map(({
-      img,
-      altimg,
-      title,
-      descr,
-      price
-    }) => {
-      return new MenuItem({
-        image: img,
-        altimg: altimg,
-        title: title,
-        description: descr,
-        price: price,
-        parentNode: menuFieldNode,
-        classes: ['menu__item']
-      });
-    });
-  }); // menuItemsPromise.then(data => console.log(data));
+	// 	return await res.json();
+	// };
+
+	// let menuItemsPromise = getResource('http://localhost:3000/menu')
+	// ------------- End Нативный метод получения данных
+
+	// Получение данных библиотекой axios
+	let menuItemsPromise = axios.get(dbUrl)
+		// Output cards
+		.then(data => {
+			return data.data.map(({img, altimg, title, descr, price}) => {
+				return new MenuItem({
+					image: img,
+					altimg: altimg,
+					title: title,
+					description: descr,
+					price: price,
+					parentNode: menuFieldNode,
+					classes: ['menu__item']
+				});
+			});
+		});
+
+	// menuItemsPromise.then(data => console.log(data));
 }
 
 module.exports = cards;
@@ -31201,69 +31171,82 @@ module.exports = cards;
 /***/ (function(module, exports) {
 
 function forms() {
-  // ----- Отправка формы -----
-  forms.forEach(form => {
-    bindPostData(form);
-  });
+	// ----- Отправка формы -----
+	const forms = document.querySelectorAll('form');
 
-  const postData = async (url, data) => {
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json'
-      },
-      body: data
-    });
-    return await res.json();
-  };
+	const message = {
+		loading: 'img/preloader.gif',
+		success: 'Спасибо, мы обязательно свяжемся с вами!',
+		fail: 'Что-то пошло не так...'
+	};
 
-  function bindPostData(form) {
-    form.addEventListener('submit', e => {
-      e.preventDefault();
-      clearTimeout(modalTimerId);
-      window.removeEventListener('scroll', showModalByScroll);
-      const preloader = create('div', 'preloader');
-      form.append(preloader);
-      const formData = new FormData(form);
-      console.log(formData);
-      const currentDate = new Date().toString();
-      const json = JSON.stringify({ ...Object.fromEntries(formData.entries()),
-        date: currentDate
-      });
-      postData('http://localhost:3000/requests', json).then(data => {
-        console.log(data);
-        showThanksModal(e.target, message.success, 'success');
-      }).catch(() => {
-        showThanksModal(e.target, message.fail, 'fail');
-        console.error('Ошибка сервера');
-      }).finally(() => {
-        preloader.remove();
-        form.reset();
-      });
-    });
-  }
+	forms.forEach(form => {
+		bindPostData(form);
+	});
 
-  function showThanksModal(target, message, result = 'success') {
-    console.log(target);
-    const targetHeight = target.offsetHeight + 'px',
-          targetWidth = target.offsetWidth + 'px';
-    hide(target);
-    const thanksModal = create('div', 'thanks__content', result == 'success' ? 'success' : 'fail');
-    show(thanksModal);
-    console.log(targetHeight);
-    thanksModal.style.minHeight = targetHeight;
-    thanksModal.style.minWidth = targetWidth;
-    thanksModal.innerHTML = `
+	const postData = async (url, data) => {
+		const res = await fetch(url, {
+			method: 'POST',
+			headers: {'Content-type': 'application/json'},
+			body: data
+		});
+
+		return await res.json();
+	};
+
+	function bindPostData(form) {
+		form.addEventListener('submit', (e) => {
+			e.preventDefault();
+			// clearTimeout(modalTimerId);
+			window.removeEventListener('scroll', showModalByScroll);
+			
+			const preloader = create('div', 'preloader')
+			form.append(preloader);
+
+			const formData = new FormData(form);
+			console.log(formData);
+			
+			
+			const currentDate = new Date().toString();
+			const json = JSON.stringify({...Object.fromEntries(formData.entries()), date: currentDate});
+
+			postData('http://localhost:3000/requests', json)
+				.then(data => {
+					console.log(data);
+					showThanksModal(e.target, message.success, 'success');
+				}).catch(() => {
+					showThanksModal(e.target, message.fail, 'fail');
+					console.error('Ошибка сервера');
+				}).finally(() => {
+					preloader.remove();
+					form.reset();
+				});
+
+		});
+	}
+
+	function showThanksModal(target, message, result = 'success') {
+		console.log(target);
+		const targetHeight = target.offsetHeight + 'px',
+		      targetWidth = target.offsetWidth + 'px';
+		hide(target);
+		const thanksModal = create('div', 'thanks__content', result=='success' ? 'success' : 'fail');
+		show(thanksModal);
+		console.log(targetHeight);
+		thanksModal.style.minHeight = targetHeight;
+		thanksModal.style.minWidth = targetWidth;
+		thanksModal.innerHTML = `
 				<div class="thanks__title">${message}</div>
 		`;
-    target.parentNode.append(thanksModal);
-    setTimeout(() => {
-      thanksModal.remove();
-      show(target);
-    }, 3000);
-  }
 
-  ;
+		target.parentNode.append(thanksModal);
+		setTimeout(() => {
+			thanksModal.remove();
+			show(target);
+		}, 3000);
+	};
+
+
 }
 
 module.exports = forms;
@@ -31278,85 +31261,67 @@ module.exports = forms;
 /***/ (function(module, exports) {
 
 function modal() {
-  // Модальное окно
-  const modalShowTrigger = document.querySelectorAll('[data-modal]'),
-        modal = document.querySelector('.modal');
+	// Модальное окно
+	const modalShowTrigger = document.querySelectorAll('[data-modal]'),
+			modal = document.querySelector('.modal');
 
-  function blockBody() {
-    document.body.classList.add('blocked');
-  }
+	function blockBody() {
+		document.body.classList.add('blocked');
+	}
+	function unBlockBody() {
+		document.body.classList.remove('blocked');
+	}
+	function show(node) {
+		node.classList.remove('hide');
+		node.classList.add('show');
+		if (node.classList.contains('modal')) { clearTimeout(modalTimerId) };
+	};
 
-  function unBlockBody() {
-    document.body.classList.remove('blocked');
-  }
+	function hide(node) {
+		node.classList.remove('show');
+		node.classList.add('hide');
+	};
+	
+	modalShowTrigger.forEach(button => {
+		button.addEventListener('click', () => {
+			show(modal);
+			blockBody();
+		});
+	});
+	
+	modal.addEventListener('click', (e) => {
+		if (e.target === modal || e.target.getAttribute('data-close') == '') {
+			console.log(e.target);
+			hide(modal);
+			unBlockBody();
+		};
+	});
 
-  function show(node) {
-    node.classList.remove('hide');
-    node.classList.add('show');
+	document.addEventListener('keydown', (e) => {
+		if (e.code === 'Escape' && !modal.classList.contains('hide')) {
+			hide(modal);
+			unBlockBody();
+		};
+	});
 
-    if (node.classList.contains('modal')) {
-      clearTimeout(modalTimerId);
-    }
+	
+	// Показ попапа по времени после загрузки DOM
+	const modalTimerId = setTimeout(() => {
+		show(modal);
+		blockBody();
+	},	30000);
 
-    ;
-  }
+	function showModalByScroll() {
+		if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
+			console.log('end');
+			show(modal);
+			blockBody();
+			window.removeEventListener('scroll', showModalByScroll);
+		};
+	};
+	window.addEventListener('scroll', showModalByScroll);
 
-  ;
-
-  function hide(node) {
-    node.classList.remove('show');
-    node.classList.add('hide');
-  }
-
-  ;
-  modalShowTrigger.forEach(button => {
-    button.addEventListener('click', () => {
-      show(modal);
-      blockBody();
-    });
-  });
-  modal.addEventListener('click', e => {
-    if (e.target === modal || e.target.getAttribute('data-close') == '') {
-      console.log(e.target);
-      hide(modal);
-      unBlockBody();
-    }
-
-    ;
-  });
-  document.addEventListener('keydown', e => {
-    if (e.code === 'Escape' && !modal.classList.contains('hide')) {
-      hide(modal);
-      unBlockBody();
-    }
-
-    ;
-  }); // Показ попапа по времени после загрузки DOM
-
-  const modalTimerId = setTimeout(() => {
-    show(modal);
-    blockBody();
-  }, 30000);
-
-  function showModalByScroll() {
-    if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
-      console.log('end');
-      show(modal);
-      blockBody();
-      window.removeEventListener('scroll', showModalByScroll);
-    }
-
-    ;
-  }
-
-  ;
-  window.addEventListener('scroll', showModalByScroll);
-  const forms = document.querySelectorAll('form');
-  const message = {
-    loading: 'img/preloader.gif',
-    success: 'Спасибо, мы обязательно свяжемся с вами!',
-    fail: 'Что-то пошло не так...'
-  };
+	
 }
 
 module.exports = modal;
@@ -31371,65 +31336,78 @@ module.exports = modal;
 /***/ (function(module, exports) {
 
 function slider() {
-  // ------------ Slider ------------
-  const slider = document.querySelector('.offer__slider'),
-        sliderCounter = slider.querySelector('.offer__slider-counter'),
-        sliderWrapper = slider.querySelector('.offer__slider-wrapper'),
-        sliderCounterButtonPrev = sliderCounter.querySelector('.offer__slider-prev'),
-        sliderCounterButtonNext = sliderCounter.querySelector('.offer__slider-next'),
-        sliderCounterCurrent = sliderCounter.querySelector('#current'),
-        sliderCounterTotal = sliderCounter.querySelector('#total');
-  axios.get(sliderUrl).then(data => data.data).then(sliderData => {
-    let currentIndex = 0;
-    const slides = sliderData.map(slide => {
-      const div = create('div', 'offer__slide');
-      div.innerHTML = `<img src="${slide.img}" alt="${slide.alt}" loading="lazy">`;
-      sliderWrapper.append(div);
-      return div;
-    }); // Nav dots
+	// ------------ Slider ------------
+	const sliderUrl = 'http://localhost:3000/slider';
+	const slider = document.querySelector('.offer__slider'),
+			sliderCounter           = slider.querySelector('.offer__slider-counter'),
+			sliderWrapper           = slider.querySelector('.offer__slider-wrapper'),
+			sliderCounterButtonPrev = sliderCounter.querySelector('.offer__slider-prev'),
+			sliderCounterButtonNext = sliderCounter.querySelector('.offer__slider-next'),
+			sliderCounterCurrent    = sliderCounter.querySelector('#current'),
+			sliderCounterTotal      = sliderCounter.querySelector('#total');
 
-    const sliderNav = create('ul', 'carousel-indicators');
-    const sliderNavDots = slides.map((slide, i) => {
-      const dot = create('li', 'dot');
-      dot.setAttribute('data-index', i);
-      sliderNav.append(dot);
-      return dot;
-    });
-    slider.append(sliderNav);
-    sliderNav.addEventListener('click', function (e) {
-      console.dir(e.target);
-      setCurrent(e.target.dataset.index);
-    });
-    const currentIndexes = slides.map((slide, i) => {
-      const span = create('span');
-      span.textContent = pad(i + 1, 2);
-      sliderCounterCurrent.append(span);
-      return span;
-    });
+	axios.get(sliderUrl).then(data => data.data).then(sliderData => {
+		let currentIndex = 0;
+		const slides = sliderData.map((slide) => {
+			const div = create('div', 'offer__slide');
+			div.innerHTML = `<img src="${slide.img}" alt="${slide.alt}" loading="lazy">`;
+			sliderWrapper.append(div);
+			return div;
+		});
 
-    function setCurrent(index) {
-      slides.forEach((slide, i) => {
-        slide.classList.remove('active');
-        currentIndexes[i].classList.remove('active');
-        sliderNavDots[i].classList.remove('active');
-      });
-      slides[index].classList.add('active');
-      currentIndexes[index].classList.add('active');
-      sliderNavDots[index].classList.add('active');
-    }
+		// Nav dots
+		const sliderNav = create('ul', 'carousel-indicators');
+		const sliderNavDots = slides.map((slide, i) => {
+			const dot = create('li', 'dot');
+			dot.setAttribute('data-index', i);
+			sliderNav.append(dot);
+			return dot;
+		});
+		slider.append(sliderNav);
+		sliderNav.addEventListener('click', function(e) {
+			console.dir(e.target);
+			setCurrent(e.target.dataset.index);
+		});
 
-    ;
-    setCurrent(0);
-    sliderCounterTotal.textContent = pad(slides.length, 2);
-    sliderCounterButtonNext.addEventListener('click', function (e) {
-      if (++currentIndex > slides.length - 1) currentIndex = 0;
-      setCurrent(currentIndex);
-    });
-    sliderCounterButtonPrev.addEventListener('click', function (e) {
-      if (--currentIndex < 0) currentIndex = slides.length - 1;
-      setCurrent(currentIndex);
-    });
-  });
+		const currentIndexes = slides.map((slide, i) =>{
+			const span = create('span');
+			span.textContent = pad(i+1, 2);
+			sliderCounterCurrent.append(span);
+			return span;
+		});
+		function setCurrent(index) {
+			slides.forEach((slide, i) => {
+				slide.classList.remove('active');
+				currentIndexes[i].classList.remove('active');
+				sliderNavDots[i].classList.remove('active');
+			});
+			slides[index].classList.add('active');
+			currentIndexes[index].classList.add('active');
+			sliderNavDots[index].classList.add('active');
+		};
+		setCurrent(0);
+		sliderCounterTotal.textContent = pad(slides.length, 2);
+		sliderCounterButtonNext.addEventListener('click', function(e) {
+			if (++currentIndex > slides.length-1) currentIndex = 0;
+			setCurrent(currentIndex);
+		});
+		sliderCounterButtonPrev.addEventListener('click', function(e) {
+			if (--currentIndex < 0) currentIndex = slides.length-1;
+			setCurrent(currentIndex);
+		});
+	});
+}
+
+
+function pad(num, size) {
+	num = num.toString();
+	while (num.length < size) num = "0" + num;
+	return num;
+};
+function create(tag = 'div', classList = '') {
+	const element = document.createElement(tag);
+	if (classList) element.classList.add(classList);
+	return element;
 }
 
 module.exports = slider;
@@ -31444,45 +31422,45 @@ module.exports = slider;
 /***/ (function(module, exports) {
 
 function tabs() {
-  //------------- Tabs --------------
-  const tabs = document.querySelectorAll('.tabheader__item'),
-        tabsContent = document.querySelectorAll('.tabcontent'),
-        tabsParent = document.querySelector('.tabheader__items');
+	//------------- Tabs --------------
+	const tabs = document.querySelectorAll('.tabheader__item'),
+			tabsContent = document.querySelectorAll('.tabcontent'),
+			tabsParent = document.querySelector('.tabheader__items');
 
-  function hideTabContent() {
-    tabsContent.forEach(item => {
-      item.classList.add('hide');
-      item.classList.remove('show', 'fade');
-    });
-    tabs.forEach(item => {
-      item.classList.remove('tabheader__item_active');
-    });
-  }
+	function hideTabContent() {
+		tabsContent.forEach(item => {
+			item.classList.add('hide');
+			item.classList.remove('show', 'fade');
+		});
 
-  function showTabContent(i = 0) {
-    tabsContent[i].classList.add('show', 'fade');
-    tabsContent[i].classList.remove('hide');
-    tabs[i].classList.add('tabheader__item_active');
-  }
+		tabs.forEach(item => {
+			item.classList.remove('tabheader__item_active');
+		});
+	}
+	function showTabContent(i = 0) {
+		tabsContent[i].classList.add('show', 'fade');
+		tabsContent[i].classList.remove('hide');
+		tabs[i].classList.add('tabheader__item_active');
+	}
 
-  hideTabContent();
-  showTabContent();
-  tabsParent.addEventListener('click', event => {
-    event.preventDefault();
-    const target = event.target;
+	hideTabContent();
+	showTabContent();
 
-    if (target && target.classList.contains('tabheader__item')) {
-      tabs.forEach((item, i) => {
-        if (target == item) {
-          hideTabContent();
-          showTabContent(i);
-        }
-      });
-    }
-  });
-}
+	tabsParent.addEventListener('click', (event) => {
+		event.preventDefault();
+		const target = event.target;
 
-;
+		if(target && target.classList.contains('tabheader__item')) {
+			tabs.forEach((item, i) => {
+				if (target == item) {
+					hideTabContent();
+					showTabContent(i);
+				}
+			}); 
+		}
+	});
+};
+
 module.exports = tabs;
 
 /***/ }),
@@ -31495,48 +31473,55 @@ module.exports = tabs;
 /***/ (function(module, exports) {
 
 function timer() {
-  // ----------------- Timer -----------------------
-  const deadLine = '2020-11-08';
+	// ----------------- Timer -----------------------
+	const deadLine = '2020-11-08';
 
-  function getTimeRemaining(endtime) {
-    const t = Date.parse(endtime) - Date.parse(new Date()),
-          days = Math.floor(t / (1000 * 60 * 60 * 24)),
-          hours = Math.floor(t / (1000 * 60 * 60) % 24),
-          minutes = Math.floor(t / 1000 / 60 % 60),
-          seconds = Math.floor(t / 1000 % 60);
-    return {
-      'total': t,
-      'days': days,
-      'hours': hours,
-      'minutes': minutes,
-      'seconds': seconds
-    };
-  }
+	function getTimeRemaining(endtime) {
+		const t = Date.parse(endtime) - Date.parse(new Date()),
+				days = Math.floor(t / (1000 * 60 * 60 * 24)),
+				hours = Math.floor((t / (1000*60*60)) % 24),
+				minutes = Math.floor((t / 1000 / 60) % 60 ),
+				seconds = Math.floor((t / 1000 ) % 60 );
+		
+		return {
+			'total': t, 
+			'days': days,
+			'hours': hours,
+			'minutes': minutes,
+			'seconds': seconds,
+		};
+	}
 
-  function setClock(selector, endtime) {
-    const timer = document.querySelector(selector),
-          days = timer.querySelector('#days'),
-          hours = timer.querySelector('#hours'),
-          minutes = timer.querySelector('#minutes'),
-          seconds = timer.querySelector('#seconds'),
-          timeInterval = setInterval(updateClock, 1000);
-    updateClock();
+	function setClock(selector, endtime) {
+		const timer = document.querySelector(selector),
+		      days = timer.querySelector('#days'),
+		      hours = timer.querySelector('#hours'),
+		      minutes = timer.querySelector('#minutes'),
+				seconds = timer.querySelector('#seconds'),
+		timeInterval = setInterval(updateClock, 1000);
 
-    function updateClock() {
-      const t = getTimeRemaining(endtime);
-      days.innerHTML = getZero(t.days);
-      hours.innerHTML = getZero(t.hours);
-      minutes.innerHTML = getZero(t.minutes);
-      seconds.innerHTML = getZero(t.seconds);
+		updateClock();
 
-      if (t.total <= 0) {
-        clearInterval(timeInterval);
-      }
-    }
-  }
+		function updateClock() {
+			const t = getTimeRemaining(endtime);
 
-  setClock('.timer', deadLine);
+			days.innerHTML = getZero(t.days);
+			hours.innerHTML = getZero(t.hours);
+			minutes.innerHTML = getZero(t.minutes);
+			seconds.innerHTML = getZero(t.seconds);
+
+			if (t.total <= 0) {
+				clearInterval(timeInterval);
+			}
+		}
+
+	}
+	setClock('.timer', deadLine);
 }
+
+function getZero(num) {
+	if (num >= 0 && num < 10) { return `0${num}`; } else {return num;}
+};
 
 module.exports = timer;
 
@@ -31609,4 +31594,4 @@ module.exports = timer;
 /***/ })
 
 /******/ });
-//# sourceMappingURL=script.js.map
+//# sourceMappingURL=bundle.js.map
