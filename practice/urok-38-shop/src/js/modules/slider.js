@@ -1,13 +1,15 @@
-function slider() {
+import {create} from '../main';
+
+function slider({container, counter, wrapper, arrowPrev, arrowNext, counterCurrent, counterTotal, }) {
 	// ------------ Slider ------------
 	const sliderUrl = 'http://localhost:3000/slider';
-	const slider = document.querySelector('.offer__slider'),
-			sliderCounter           = slider.querySelector('.offer__slider-counter'),
-			sliderWrapper           = slider.querySelector('.offer__slider-wrapper'),
-			sliderCounterButtonPrev = sliderCounter.querySelector('.offer__slider-prev'),
-			sliderCounterButtonNext = sliderCounter.querySelector('.offer__slider-next'),
-			sliderCounterCurrent    = sliderCounter.querySelector('#current'),
-			sliderCounterTotal      = sliderCounter.querySelector('#total');
+	const slider = document.querySelector(container),
+			sliderCounter           = slider.querySelector(counter),
+			sliderWrapper           = slider.querySelector(wrapper),
+			sliderCounterButtonPrev = sliderCounter.querySelector(arrowPrev),
+			sliderCounterButtonNext = sliderCounter.querySelector(arrowNext),
+			sliderCounterCurrent    = sliderCounter.querySelector(counterCurrent),
+			sliderCounterTotal      = sliderCounter.querySelector(counterTotal);
 
 	axios.get(sliderUrl).then(data => data.data).then(sliderData => {
 		let currentIndex = 0;
@@ -67,10 +69,5 @@ function pad(num, size) {
 	while (num.length < size) num = "0" + num;
 	return num;
 };
-function create(tag = 'div', classList = '') {
-	const element = document.createElement(tag);
-	if (classList) element.classList.add(classList);
-	return element;
-}
 
-module.exports = slider;
+export default slider;

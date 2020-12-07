@@ -1,3 +1,7 @@
+import {hide, show, modalNode} from './modal';
+import {create} from '../main';
+import {postData} from '../services/services';
+
 function forms() {
 	// ----- Отправка формы -----
 	const forms = document.querySelectorAll('form');
@@ -12,21 +16,9 @@ function forms() {
 		bindPostData(form);
 	});
 
-	const postData = async (url, data) => {
-		const res = await fetch(url, {
-			method: 'POST',
-			headers: {'Content-type': 'application/json'},
-			body: data
-		});
-
-		return await res.json();
-	};
-
 	function bindPostData(form) {
 		form.addEventListener('submit', (e) => {
 			e.preventDefault();
-			// clearTimeout(modalTimerId);
-			window.removeEventListener('scroll', showModalByScroll);
 			
 			const preloader = create('div', 'preloader')
 			form.append(preloader);
@@ -77,4 +69,4 @@ function forms() {
 
 }
 
-module.exports = forms;
+export default forms;

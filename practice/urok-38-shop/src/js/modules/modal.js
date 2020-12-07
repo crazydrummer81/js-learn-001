@@ -1,7 +1,15 @@
+const modalNode = document.querySelector('.modal');
+
 function modal() {
 	// Модальное окно
-	const modalShowTrigger = document.querySelectorAll('[data-modal]'),
-			modal = document.querySelector('.modal');
+	const modalShowTrigger = document.querySelectorAll('[data-modal]');
+
+	// Показ попапа по времени после загрузки DOM
+	const modalTimerId = setTimeout(() => {
+		show(modalNode);
+		clearTimeout(modalTimerId);
+		blockBody();
+	},	30000);
 
 	function blockBody() {
 		document.body.classList.add('blocked');
@@ -9,57 +17,65 @@ function modal() {
 	function unBlockBody() {
 		document.body.classList.remove('blocked');
 	}
-	function show(node) {
-		node.classList.remove('hide');
-		node.classList.add('show');
-		if (node.classList.contains('modal')) { clearTimeout(modalTimerId) };
-	};
 
-	function hide(node) {
-		node.classList.remove('show');
-		node.classList.add('hide');
-	};
-	
+	// window.addEventListener('scroll', () => {
+	// 	showModalByScroll();
+	// 	clearTimeout(modalTimerId);
+	// 	window.removeEventListener('scroll', showModalByScroll);
+	// });
+
+	window.addEventListener('scroll', showModalByScroll);
+
 	modalShowTrigger.forEach(button => {
 		button.addEventListener('click', () => {
-			show(modal);
+			show(modalNode);
+			clearTimeout(modalTimerId);
+			window.removeEventListener('scroll', showModalByScroll);
 			blockBody();
 		});
 	});
+
 	
-	modal.addEventListener('click', (e) => {
-		if (e.target === modal || e.target.getAttribute('data-close') == '') {
+	
+	modalNode.addEventListener('click', (e) => {
+		if (e.target === modalNode || e.target.getAttribute('data-close') == '') {
 			console.log(e.target);
-			hide(modal);
+			hide(modalNode);
 			unBlockBody();
 		};
 	});
 
 	document.addEventListener('keydown', (e) => {
-		if (e.code === 'Escape' && !modal.classList.contains('hide')) {
-			hide(modal);
+		if (e.code === 'Escape' && !modalNode.classList.contains('hide')) {
+			hide(modalNode);
 			unBlockBody();
 		};
 	});
 
 	
-	// Показ попапа по времени после загрузки DOM
-	const modalTimerId = setTimeout(() => {
-		show(modal);
-		blockBody();
-	},	30000);
-
 	function showModalByScroll() {
 		if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
 			console.log('end');
-			show(modal);
+			show(modalNode);
 			blockBody();
 			window.removeEventListener('scroll', showModalByScroll);
+			clearTimeout(modalTimerId);
 		};
 	};
-	window.addEventListener('scroll', showModalByScroll);
-
 	
 }
 
-module.exports = modal;
+function show(node) {
+	node.classList.remove('hide');
+	node.classList.add('show');
+};
+
+function hide(node) {
+	node.classList.remove('show');
+	node.classList.add('hide');
+};
+
+export default modal;
+export {hide};
+export {show};
+export {modalNode};

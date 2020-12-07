@@ -1,4 +1,6 @@
-function cards() {
+import {getResource} from '../services/services';
+
+function cards(menuFieldSelector) {
 	// ------------- Cards ------------
 	class MenuItem {
 		constructor(props = {}) {
@@ -36,28 +38,14 @@ function cards() {
 		};
 	};
 
-	const menuFieldNode = document.querySelector('#menu__field .container');
+	const menuFieldNode = document.querySelector(menuFieldSelector);
 	const dbUrl = 'http://localhost:3000/menu';
 
 	// ------------- Begin Нативный метод получения данных
-	// const getResource = async (url) => {
-	// 	const res = await fetch(url);
-
-	// 	if (!res.ok) {
-	// 		throw new Error(`Could not fetch ${url}, status: ${res.status}`);
-	// 	};
-
-	// 	return await res.json();
-	// };
-
-	// let menuItemsPromise = getResource('http://localhost:3000/menu')
-	// ------------- End Нативный метод получения данных
-
-	// Получение данных библиотекой axios
-	let menuItemsPromise = axios.get(dbUrl)
-		// Output cards
+	getResource('http://localhost:3000/menu')
 		.then(data => {
-			return data.data.map(({img, altimg, title, descr, price}) => {
+			console.log(data);
+			return data.map(({img, altimg, title, descr, price}) => {
 				return new MenuItem({
 					image: img,
 					altimg: altimg,
@@ -69,8 +57,8 @@ function cards() {
 				});
 			});
 		});
+	// ------------- End Нативный метод получения данных
 
-	// menuItemsPromise.then(data => console.log(data));
 }
 
-module.exports = cards;
+export default cards;

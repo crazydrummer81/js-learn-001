@@ -1,24 +1,32 @@
-"use strict";
+import tabs   from './modules/tabs';
+import modal  from './modules/modal';
+import calc   from './modules/calc';
+import cards  from './modules/cards';
+import slider from './modules/slider';
+import forms  from './modules/forms';
+import timer  from './modules/timer';
 
 const { data } = require("autoprefixer");
 
 document.addEventListener('DOMContentLoaded', () => {
 	console.log('DOMContentLoaded');
-	const tabs   = require('./modules/tabs'),
-	      modal  = require('./modules/modal'),
-	      calc   = require('./modules/calc'),
-	      cards  = require('./modules/cards'),
-	      slider = require('./modules/slider'),
-	      forms  = require('./modules/forms'),
-	      timer  = require('./modules/timer');
 
-	tabs();
+
+	tabs('.tabheader__item', '.tabcontent', '.tabheader__items', 'tabheader__item_active');
 	modal();
 	calc();
-	cards();
-	slider();
+	cards('#menu__field .container');
+	slider({
+		container: '.offer__slider',
+		counter: '.offer__slider-counter',
+		wrapper: '.offer__slider-wrapper',
+		arrowPrev: '.offer__slider-prev',
+		arrowNext: '.offer__slider-next',
+		counterCurrent: '#current',
+		counterTotal: '#total'
+	});
 	forms();
-	timer();
+	timer('.timer', '2020-12-10');
 
 });
 
@@ -27,3 +35,5 @@ function create(tag = 'div', classList = '') {
 	if (classList) element.classList.add(classList);
 	return element;
 }
+
+export {create};
