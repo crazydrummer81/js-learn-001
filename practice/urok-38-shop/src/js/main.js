@@ -1,3 +1,8 @@
+require('es6-promise').polyfill();
+import 'nodelist-foreach-polyfill'; // Библиртеки npm импортируются по умолчанию из node_modules
+
+
+
 import tabs   from './modules/tabs';
 import modal  from './modules/modal';
 import calc   from './modules/calc';
@@ -7,6 +12,9 @@ import forms  from './modules/forms';
 import timer  from './modules/timer';
 
 const { data } = require("autoprefixer");
+
+// Run DB server
+// npx json-server db.json
 
 document.addEventListener('DOMContentLoaded', () => {
 	console.log('DOMContentLoaded');
