@@ -26,9 +26,9 @@ export default class App extends Component {
 
 	state = {
 		data: [
-			{label: 'Goin to learn React', important: true, id: 1},
-			{label: 'That is so good', important: false, id: 2},
-			{label: 'I need a break...', important: false, id: 3}
+			{label: 'Goin to learn React', important: true, id: 1, like: false},
+			{label: 'That is so good', important: false, id: 2, like: false},
+			{label: 'I need a break...', important: false, id: 3, like: false}
 		]
 	}
 
@@ -59,17 +59,71 @@ export default class App extends Component {
 		})
 	}
 
+	// onToggleImportant = (id) => {
+	// 	console.log('onToggleImportant(id)', id);
+	// 	this.setState(({data}) => {
+	// 		const index = data.findIndex(elem => elem.id === id);
+	// 		const old = data[index];
+	// 		const newItem = {...old, important: !old.important};
+
+	// 		const newArr = [...data.slice(0, index), newItem, ...data.slice(index + 1)];
+
+	// 		return {
+	// 			data: newArr
+	// 		}
+	// 	});
+	// }
+
+	// onToggleLiked = (id) => {
+	// 	console.log('onToggleLiked(id)', id);
+	// 	this.setState(({data}) => {
+	// 		const index = data.findIndex(elem => elem.id === id);
+	// 		const old = data[index];
+	// 		const newItem = {...old, like: !old.like};
+
+	// 		const newArr = [...data.slice(0, index), newItem, ...data.slice(index + 1)];
+
+	// 		return {
+	// 			data: newArr
+	// 		}
+	// 	});
+	// }
+
+	onToggle = (key, id) => {
+		this.setState(({data}) => {
+			const index = data.findIndex(elem => elem.id === id);
+			const old = data[index];
+			const newItem = {...old};
+			newItem[key] = !old[key]
+
+			const newArr = [...data.slice(0, index), newItem, ...data.slice(index + 1)];
+
+			return {
+				data: newArr
+			}
+		});
+	}
+
+
 	render() {
+		const {data} = this.state;
+		const liked = data.filter(item => item.like).length;
+		const allPosts = data.length;
+
 		return (
 			<StyledAppBlock>
-				<AppHeader/>
+				<AppHeader
+					liked={liked}
+					allPosts={allPosts}/>
 				<div className="search-panel d-flex">
 					<SearchPanel/>
 					<PostStatusFilter/>
 				</div>
 				<PostList
 					posts={this.state.data}
-					onDelete={this.deleteItem}/>
+					onDelete={this.deleteItem}
+					onToggleImportant={(id) => this.onToggle('important', id)}
+					onToggleLiked={(id) => this.onToggle('like', id)}/>
 				<PostAddForm
 					onAdd={this.addItem}/>
 			</StyledAppBlock>
