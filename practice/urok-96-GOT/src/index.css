@@ -22,3 +22,14 @@ a:active {
     text-decoration: none;
     color: inherit;
 }
+.overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    padding: 1rem;
+    margin: 20px;
+}

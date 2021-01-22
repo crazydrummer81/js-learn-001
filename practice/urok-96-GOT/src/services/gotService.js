@@ -24,11 +24,11 @@ export default class GOTService {
 
 	_transformCharacter(char) {
 		return {
-			name: char.name || '?',
-			gender: char.gender || '?',
-			born: char.born || '?',
-			died: char.died || '?',
-			culture: char.culture || '?',
+			name: char.name || 'неизвестно',
+			gender: char.gender || 'неизвестно',
+			born: char.born || 'неизвестно',
+			died: char.died || 'неизвестно',
+			culture: char.culture || 'неизвестно',
 			id: char.id
 		}
 	}
@@ -52,7 +52,4 @@ export default class GOTService {
 			released: book.released
 		}
 	}
-
-
-
 }
