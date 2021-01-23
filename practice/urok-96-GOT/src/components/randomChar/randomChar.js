@@ -7,29 +7,31 @@ import ErrorMessage from '../errorMessage';
 
 export default class RandomChar extends Component {
 
-    constructor() {
-        super();
-        this.updateChar();
-        let t = 5000;
-        this.initProgressBar(t);
-        setInterval(() => {
-            this.updateChar();
-            this.initProgressBar(t);
-        }, t);
-    }
-
     state = {
         char: {},
+        progress: 0,
         loading: true,
-        progress: {
-            value: 0,
-            interval: 0
-        },
         error: false,
         errorMessage: ''
     }
+    interval = 1500;
     gotService = new gotService();
 
+    componentDidMount() {
+        console.log('componentDidMount');
+        this.updateChar();
+
+        this.intervalId = setInterval(() => {
+            this.updateChar();
+
+        }, this.interval);
+    }
+    
+    componentWillUnmount() {
+        console.log('componentWillUnmount');
+        clearInterval(this.intervalId);
+        clearInterval(this.progressIntervalId);
+    }
 
     onCharLoaded(char) {
         this.setState({
@@ -49,31 +51,39 @@ export default class RandomChar extends Component {
     }
 
     updateChar() {
-        this.setState({loading: true});
-        sleep(1000).then(() => {
-            const id = Math.floor(Math.random()*140 + 25);
-            this.gotService.getCharacter(id)
-                .then((char) => this.onCharLoaded(char))
-                .catch((err) => this.onError(err))
+        // console.log('UPDATE');
+        clearInterval(this.progressIntervalId);
+        this.setState({loading: true, progress: 0});
+        const id = Math.floor(Math.random()*140 + 25);
+        // const id = 10000;
+        this.gotService.getCharacter(id)
+            .then((char) => {
+                this.onCharLoaded(char);
+                this.initProgressBar();
+            })
+            .catch((err) => this.onError(err))
+    }
+
+    
+	initProgressBar() {
+        console.log('initProgressBar');
+        this.setState({
+            progress: 0
         })
+		const step = Math.floor(this.interval/100);
+		this.progressIntervalId = setInterval(() => {
+			this.setState({
+				progress: this.state.progress + 1
+			});
+            if (this.state.progress >= 100) clearInterval(this.progressIntervalId);
+            // console.log('this.state.progress', this.state.progress);
+		}, step);
     }
 
-    initProgressBar(t) {
-        let v = 0;
-        const i = Math.floor(t/100);
-        const int = setInterval(() => {
-            this.updateProgress(v++, i);
-            if (v >= 100) clearInterval(int);
-        }, i);
-    }
-
-    updateProgress(v, i) {
-        this.setState({progress: {value: v, interval: i}});
-    }
 
     render() {
+        // console.log('RENDER');
         const {char, loading, progress, error, errorMessage} = this.state;
-        const {value, interval} = this.state.progress;
 
         const preloader = loading ? <Preloader/> : null;
         const message = error ? <ErrorMessage message={errorMessage}/> : null;
@@ -81,22 +91,20 @@ export default class RandomChar extends Component {
         return (
             <div className="random-block rounded">
                 <ProgressBar
-                    progress={value}
-                    interval={interval}/>
+                    value={progress}/>
                 {preloader}
                 {message}
-                <View char={char} progress={progress}/>
+                <View char={char}/>
             </div>
         );
     }
 }
 
 const View = ({char}) => {
-    const {name, gender, born, died, culture, id, loading} = char;
+    const {name, gender, born, died, culture, id} = char;
     return(
         <>
-             <h4>{name}</h4>
-
+            <h4>{name}</h4>
             <ul className="list-group list-group-flush">
                 <li className="list-group-item d-flex justify-content-between">
                     <span className="term">ID </span>

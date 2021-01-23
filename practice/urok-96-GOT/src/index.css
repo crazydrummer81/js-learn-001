@@ -33,3 +33,11 @@ a:active {
     padding: 1rem;
     margin: 20px;
 }
+
+.btn {
+    padding: 1rem 1.5rem;
+    background-color: #0275d8;
+    border-radius: 5px;
+    color: #fff;
+    margin-bottom: 2rem;
+}

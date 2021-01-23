@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './errorMessage.css';
+import {ReactComponent as ErrorImage} from './emoji-worried-face.svg';
 
 export default class Preloader extends Component {
 	render() {
@@ -7,8 +8,9 @@ export default class Preloader extends Component {
 		return(
 			<div className="overlay">
 				<div className="error-message">
-					<span>Что-то пошло не так...</span><br/>
-					<span>{errorMessage}</span>
+					<ErrorImage/>
+					<span className="error-message__heding">Что-то пошло не так...</span>
+					<span className="error-message__content">{errorMessage}</span>
 				</div>
 			</div>
 		);
