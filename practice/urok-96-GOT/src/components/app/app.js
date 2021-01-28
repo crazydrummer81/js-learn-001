@@ -8,6 +8,7 @@ import ErrorMessage from '../errorMessage';
 import CharacterPage from '../characterPage';
 import GOTService from '../../services/gotService';
 import BookPage from '../bookPage';
+import HousePage from '../housePage/housePage';
 
 export default class App extends Component {
     gotService = new GOTService();
@@ -53,17 +54,7 @@ export default class App extends Component {
                     </Row>
                     <CharacterPage/>
                     <BookPage/>
-                    <Row>
-                        <Col md='6'>
-                            <ItemList 
-                                onItemSelected={this.onItemSelected}
-                                getData={this.gotService.getAllHouses}
-                                renderItem={(item) => `${item.name}`}/>
-                        </Col>
-                        <Col md='6'>
-                            <ItemDetails itemId={this.state.selectedChar}/>
-                        </Col>
-                    </Row>
+                    <HousePage/>
                 </Container>
             </>
         );
