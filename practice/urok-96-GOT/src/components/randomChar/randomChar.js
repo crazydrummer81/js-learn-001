@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import './randomChar.css';
-import gotService from '../../services/gotService';
+import GOTService from '../../services/gotService';
 import ProgressBar from '../progressBar';
 import Preloader from '../preloader';
 import ErrorMessage from '../errorMessage';
@@ -15,10 +15,10 @@ export default class RandomChar extends Component {
         errorMessage: ''
     }
     interval = 1500;
-    gotService = new gotService();
+    gotService = new GOTService();
 
     componentDidMount() {
-        console.log('componentDidMount');
+        // console.log('componentDidMount');
         this.updateChar();
 
         this.intervalId = setInterval(() => {
@@ -28,7 +28,7 @@ export default class RandomChar extends Component {
     }
     
     componentWillUnmount() {
-        console.log('componentWillUnmount');
+        // console.log('componentWillUnmount');
         clearInterval(this.intervalId);
         clearInterval(this.progressIntervalId);
     }
@@ -40,6 +40,7 @@ export default class RandomChar extends Component {
             error: false,
             errorMessage: ''
         });
+        this.initProgressBar();
     }
 
     onError(err) {
@@ -56,17 +57,17 @@ export default class RandomChar extends Component {
         this.setState({loading: true, progress: 0});
         const id = Math.floor(Math.random()*140 + 25);
         // const id = 10000;
-        this.gotService.getCharacter(id)
+        this.gotService.getItem('character', id)
             .then((char) => {
                 this.onCharLoaded(char);
-                this.initProgressBar();
             })
             .catch((err) => this.onError(err))
     }
 
     
 	initProgressBar() {
-        console.log('initProgressBar');
+        // console.log('initProgressBar');
+        // console.log('this.interval', this.interval);
         this.setState({
             progress: 0
         })

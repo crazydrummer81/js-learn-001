@@ -31,7 +31,10 @@ a:active {
     justify-content: center;
     z-index: 1;
     padding: 1rem;
-    margin: 20px;
+    margin: 10px;
+}
+.overlay.relative {
+    position: relative;
 }
 
 .btn {
