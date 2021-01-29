@@ -52,6 +52,7 @@ export default class App extends Component {
                                 <Button color="primary" onClick={this.toggleRandomChar}>Toggle random char</Button>
                             </Col>
                         </Row>
+                        <Route path='/' exact component={() => <h1>Weclome to GOT-BD</h1>}/>
                         <Route path='/characters' component={CharacterPage}/>
                         <Route path='/books' component={BookPage}/>
                         <Route path='/houses' component={HousePage}/>
