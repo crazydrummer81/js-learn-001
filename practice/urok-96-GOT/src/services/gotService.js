@@ -61,7 +61,7 @@ export default class GOTService {
 			region: house.region,
 			words: house.words,
 			titles: house.titles,
-			overlord: `<a href="${house.overlord}">${house.overlord}</a>`,
+			overlord: house.overlord,
 			ancestralWeapons: house.ancestralWeapons
 		}
 	}

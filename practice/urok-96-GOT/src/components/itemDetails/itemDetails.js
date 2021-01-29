@@ -5,10 +5,11 @@ import Preloader from '../preloader';
 import ErrorMessage from '../errorMessage';
 
 const Field = ({item, field, label}) => {
+    const value = !isLink(item[field]) ? item[field] : <a href={item[field]}>{item[field]}</a>;
     return(
         <li className="list-group-item d-flex justify-content-between">
             <span className="term">{label}</span>
-            <span>{item[field]}</span>
+            <span>{value}</span>
         </li>
     )
 }
@@ -49,8 +50,6 @@ export default class ItemDetails extends Component {
             return;
         }
 
-        console.log('itemId', itemId);
-
         this.gotService.getItem(itemType, itemId)
             .then((item) => {
                 // console.log('item', item);
@@ -88,4 +87,12 @@ export default class ItemDetails extends Component {
             </div>
         );
     }
+}
+
+function isLink(v) {
+    if (typeof(v) !== 'string') return false;
+    const expression = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
+    const regex = new RegExp(expression);
+
+    return v.match(regex);
 }

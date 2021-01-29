@@ -9,6 +9,7 @@ import CharacterPage from '../characterPage';
 import GOTService from '../../services/gotService';
 import BookPage from '../bookPage';
 import HousePage from '../housePage/housePage';
+import {BrowserRouter as Router, Route} from 'react-router-dom';
 
 export default class App extends Component {
     gotService = new GOTService();
@@ -38,25 +39,25 @@ export default class App extends Component {
             return <ErrorMessage/>
         }
 
-        console.log(this);
-
         return (
-            <> 
-                <Container>
-                    <Header />
-                </Container>
-                <Container>
-                    <Row>
-                        <Col lg={{size: 6, offset: 0}}>
-                        {randomChar}
-                            <Button color="primary" onClick={this.toggleRandomChar}>Toggle random char</Button>
-                        </Col>
-                    </Row>
-                    <CharacterPage/>
-                    <BookPage/>
-                    <HousePage/>
-                </Container>
-            </>
+            <Router>
+                <div className="app"> 
+                    <Container>
+                        <Header />
+                    </Container>
+                    <Container>
+                        <Row>
+                            <Col lg={{size: 6, offset: 0}}>
+                            {randomChar}
+                                <Button color="primary" onClick={this.toggleRandomChar}>Toggle random char</Button>
+                            </Col>
+                        </Row>
+                        <Route path='/characters' component={CharacterPage}/>
+                        <Route path='/books' component={BookPage}/>
+                        <Route path='/houses' component={HousePage}/>
+                    </Container>
+                </div>
+            </Router>
         );
 
     };

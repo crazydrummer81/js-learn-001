@@ -10,7 +10,6 @@ export default class ItemList extends Component {
     }
 
     componentDidMount() {
-        console.log('itemList props', this.props);
         const {getData} = this.props;
 
         getData()
