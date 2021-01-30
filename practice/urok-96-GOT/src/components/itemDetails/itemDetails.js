@@ -23,8 +23,8 @@ export default class ItemDetails extends Component {
     gotService = new GOTService();
 
     state = {
-        item: null,
-        loading: false,
+        item: {},
+        loading: true,
         error: false,
         errorMessage: null,
     }
@@ -76,7 +76,13 @@ export default class ItemDetails extends Component {
             <div className="item-details rounded">
                 {this.state.loading ? <Preloader/> : null}
                 {this.state.error ? <ErrorMessage message={errorMessage}/> : null}
-                <h4>{name}</h4>
+                <h4>
+                    <ArrowBack onClick={() => {
+                        console.log('goBack');
+                        this.props.history.goBack()
+                    }}></ArrowBack>
+                    {name}
+                </h4>
                 <ul className="list-group list-group-flush">
                     {
                         React.Children.map(this.props.children, (child) => {
@@ -89,9 +95,21 @@ export default class ItemDetails extends Component {
     }
 }
 
+const ArrowBack = () => {
+    return(
+        <span className="arrow-back">
+            <svg 
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 448 512">
+                <path d="M134.059 296H436c6.627 0 12-5.373 12-12v-56c0-6.627-5.373-12-12-12H134.059v-46.059c0-21.382-25.851-32.09-40.971-16.971L7.029 239.029c-9.373 9.373-9.373 24.569 0 33.941l86.059 86.059c15.119 15.119 40.971 4.411 40.971-16.971V296z"/>
+            </svg>
+        </span>
+    )
+}
+
 function isLink(v) {
     if (typeof(v) !== 'string') return false;
-    const expression = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
+    const expression = /[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)?/gi;
     const regex = new RegExp(expression);
 
     return v.match(regex);

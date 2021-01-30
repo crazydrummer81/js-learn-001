@@ -3,11 +3,13 @@
     padding: 25px 25px 15px 25px;
     margin-bottom: 40px;
     position: relative;
+    min-height: 14rem;
 }
 
 .item-details h4 {
     margin-bottom: 20px;
     text-align: center;
+    position: relative;
 }
 
 .select-error {
@@ -17,4 +19,14 @@
 }
 .item-details .term {
     margin-right: 1em;
+}
+.arrow-back {
+    position: absolute;
+    display: inline-block;
+    left: 0;
+    width: 1.2em;
+    height: 100%;
+    font-size: 1em;
+    line-height: 1em;
+    cursor: pointer;
 }

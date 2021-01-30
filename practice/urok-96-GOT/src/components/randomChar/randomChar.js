@@ -4,6 +4,7 @@ import GOTService from '../../services/gotService';
 import ProgressBar from '../progressBar';
 import Preloader from '../preloader';
 import ErrorMessage from '../errorMessage';
+import PropTypes from 'prop-types';
 
 export default class RandomChar extends Component {
 
@@ -14,7 +15,7 @@ export default class RandomChar extends Component {
         error: false,
         errorMessage: ''
     }
-    interval = 1500;
+    interval = this.props.interval;
     gotService = new GOTService();
 
     componentDidMount() {
@@ -99,6 +100,14 @@ export default class RandomChar extends Component {
             </div>
         );
     }
+}
+
+RandomChar.defaultProps = {
+    interval: 2000
+}
+
+RandomChar.propTypes = {
+    interval: PropTypes.number
 }
 
 const View = ({char}) => {

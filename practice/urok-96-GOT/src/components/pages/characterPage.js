@@ -4,28 +4,27 @@ import ItemDetails, {Field} from '../itemDetails';
 import ErrorMessage from '../errorMessage';
 import ItemList from '../itemList';
 import RowBlock from '../rowBlock';
-import './housePage.css';
 
-export default class HousePage extends Component {
+export default class CharacterPage extends Component {
 
 	gotService = new GOTService();
 
 	state = {
-		selectedHouse: 9,
+		selectedChar: 130,
 		error: false
 	}
 
 	componentDidCatch() {
 		console.log('error');
 		this.setState({error: true})
-  	}
+  }
 
 
 	onItemSelected = (id) => {
 		this.setState({
-			 selectedHouse: id
+			 selectedChar: id
 		});
-  	}
+  }
 
 	render() {
 
@@ -36,17 +35,16 @@ export default class HousePage extends Component {
 		const itemList = (
 			<ItemList 
 				onItemSelected={this.onItemSelected}
-				getData={this.gotService.getAllHouses}
-				renderItem={({name, region}) => `${name} (${region})`}/>
+				getData={this.gotService.getAllCharacters}
+				renderItem={({name, gender}) => `${name || ''} ${gender ? `(${gender})` : ''}`}/>
 		)
 
 		const itemDetails = (
-			<ItemDetails itemId={this.state.selectedHouse} itemType='house'>
-				<Field field='name'             label='Name'/>
-				<Field field='words'            label='Words'/>
-				<Field field='titles'           label='Titles'/>
-				<Field field='overlord'         label='Overlord'/>
-				<Field field='ancestralWeapons' label='AncestralWeapons'/>
+			<ItemDetails itemId={this.state.selectedChar} itemType='character'>
+				<Field field='gender'  label='Gender'/>
+				<Field field='born'    label='Born'/>
+				<Field field='died'    label='Died'/>
+				<Field field='culture' label='Culture'/>
 			</ItemDetails>
 		)
 
