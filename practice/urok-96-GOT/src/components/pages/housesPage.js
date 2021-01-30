@@ -21,9 +21,10 @@ export default class HousesPage extends Component {
 
 
 	onItemSelected = (id) => {
-		this.setState({
-			 selectedHouse: id
-		});
+		if (id !== this.state.selectedHouse)
+			this.setState({
+				selectedHouse: id
+			});
   	}
 
 	render() {
@@ -36,7 +37,8 @@ export default class HousesPage extends Component {
 			<ItemList 
 				onItemSelected={this.onItemSelected}
 				getData={this.gotService.getAllHouses}
-				renderItem={({name, region}) => `${name} (${region})`}/>
+				renderItem={({name, region}) => `${name} (${region})`}
+				activeItem={this.state.selectedHouse}/>
 		)
 
 		const itemDetails = (
