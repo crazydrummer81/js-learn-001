@@ -1,83 +1,52 @@
-import React, {Component} from 'react';
+import React, {useState, useEffect} from 'react';
 import Preloader from '../preloader';
 import './itemList.css';
-import PropTypes from 'prop-types';
-import GOTService from '../../services/gotService';
 
-class ItemList extends Component {
+export default function ItemList({getData, onItemSelected, renderItem}) {
+    
+    const [itemList, updateList] = useState([]);
+    const [activeitem, setActiveItem] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-    state = {
-        activeitem: null,
-    }
+    // activeitem, loading
 
-    renderItems(arr) {
+    useEffect(() => {
+        setLoading(true);
+        getData()
+            .then((data) => {
+                updateList(data);
+                setLoading(false);
+            });
+    }, []); // Второй аргумент - как prevProps, но работает только с примитивами. Для массива мы передаем пустой массив,
+            // это говорит хуку, что эффект нужно выполнить только при появлении и исчезновении компонента.
+
+    function renderItems(arr) {
         
         return arr.map((item,i) => {
             const {id} = item;
-            const label = this.props.renderItem(item);
-            const className = `list-group-item${this.state.activeitem === i ? ' active' : ''}`;
+            const label = renderItem(item);
+            const className = `list-group-item${activeitem === i ? ' active' : ''}`;
             return (
                 <li 
                     key={id}
                     className={className}
-                    onClick={() => {this.props.onItemSelected(id); this.setState({activeitem: i});}}>
+                    onClick={() => {onItemSelected(id); setActiveItem(id)}}>
                     {label}
                 </li>
             );
         });
     }
 
-    render() {
-        const {data, loading} = this.props;
-        const items = this.renderItems(data);
-        console.log('items', items);
-        return (
-            <ul className="item-list list-group">
-                {loading ? <Preloader/> : null}
-                {items}
-            </ul>
-        );
-    }
-}
+    const items = renderItems(itemList);
+    console.log('items', items);
+    return (
+        <ul className="item-list list-group">
+            {loading ? <Preloader/> : null}
+            {items}
+        </ul>
+    );
+};
 
-ItemList.defaultProps = {
-    onItemSelected: () => {console.log('ItemList.defaultProps onItemSelected()')},
-}
-
-const withData = (View, getData) => {
-    return class extends Component {
-
-        state = {
-            data: range(1,6).map((i) => ({id:i})),
-            loading: true
-        }
-
-        static propTypes = {
-            onItemSelected: PropTypes.func,
-        }
-    
-        componentDidMount() {
-    
-            getData()
-                .then((data) => {
-                    console.log('data', data);
-                    this.setState({
-                        data: data,
-                        loading: false
-                    });
-                });
-        }
-
-        render() {
-            const {data, loading} = this.state;
-            
-            return <View {...this.props} data={data} loading={loading}/>
-        }
-    };
-}
-
-const {getAllCharacters} = new GOTService();
-export default withData(ItemList, getAllCharacters);
 
 
 //---------------------------------------------------
