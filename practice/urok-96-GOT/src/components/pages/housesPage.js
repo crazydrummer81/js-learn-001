@@ -37,7 +37,7 @@ export default class HousesPage extends Component {
 			<ItemList 
 				onItemSelected={this.onItemSelected}
 				getData={this.gotService.getAllHouses}
-				renderItem={({name, region}) => `${name} (${region})`}
+				renderItem={({name, region}) => `${name || ''} ${region ? `(${region})` : ''}`}
 				activeItem={this.state.selectedHouse}/>
 		)
 

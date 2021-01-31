@@ -5,7 +5,6 @@ import './itemList.css';
 export default function ItemList({getData, onItemSelected, renderItem, activeItem}) {
     
     const [itemList, updateList] = useState(range(1,6).map(i => ({id:i}))),
-        //   [activeItem, setActiveItem] = useState(null),
           [loading, setLoading] = useState(true);
 
     useEffect(() => {
