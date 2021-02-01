@@ -4,26 +4,10 @@ import React, { Component } from 'react';
 import './post-list-item.css';
 
 export default class PostListItem extends Component {
-	state = {
-		important: false,
-		like: false
-	}
-
-	onImportant = () => {
-		this.setState(({important}) => ({
-			important: !important
-		}))
-	}
-
-	onLike = () => {
-		this.setState(({like}) => ({
-			like: !like
-		}))
-	}
 
 	render() {
-		const {label, onDelete} = this.props;
-		const {important, like} = this.state;
+		const {label, onDelete, onToggleImportant, onToggleLiked, important, like} = this.props;
+		// const {important, like} = this.state;
 		let classNames = 'app-list-item d-flex justify-content-between';
 
 		if (important) {
@@ -38,14 +22,14 @@ export default class PostListItem extends Component {
 			<div className={classNames}>
 				<span
 					className="app-list-item-label"
-					onDoubleClick={this.onLike}>
+					onDoubleClick={onToggleLiked}>
 					{label}
 				</span>
 				<div className="d-flex judtify-content-center align-items-center">
 					<button
 						type="button"
 						className="btn-star btn-sm"
-						onClick={this.onImportant}>
+						onClick={onToggleImportant}>
 						<i className="fa fa-star"></i>
 					</button>
 					<button
@@ -56,7 +40,7 @@ export default class PostListItem extends Component {
 					</button>
 					<i
 						className="icon-heart"
-						onClick={this.onLike}></i>
+						onClick={onToggleLiked}></i>
 				</div>
 			</div>
 		)

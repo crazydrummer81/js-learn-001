@@ -1,0 +1,11 @@
+.m2progress-bar {
+	height: 3px;
+	display: flex;
+}
+
+.m2progress-bar__fill {
+	display: block;
+	height: 100%;
+	width: 0;
+	background-color: #007bff;
+}

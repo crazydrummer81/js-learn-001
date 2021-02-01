@@ -1,0 +1,22 @@
+.error-message {
+	font-size: 1.5rem;
+	color: red;
+	text-align: center;
+	display: flex;
+	flex-flow: column;
+	align-items: center;
+	justify-content: center;
+}
+.error-message__heding {
+	margin-bottom: 1em;
+}
+.error-message__content {
+	font-size: 0.75rem;
+	padding: 0.5rem 1rem;
+	background-color: #eee;
+	border: 1px solid #ddd;
+}
+.error-message svg,
+.error-message img {
+	width: 30%;
+}
