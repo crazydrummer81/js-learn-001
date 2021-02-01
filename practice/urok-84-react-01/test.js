@@ -1,0 +1,1 @@
+console.log('pochemu ne rabotaet snippety');
