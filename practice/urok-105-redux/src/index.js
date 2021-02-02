@@ -1,37 +1,18 @@
-import {createStore, bindActionCreators} from 'redux';
-import * as actions from './actions';
+import React, { Component } from 'react';
+import ReactDom from 'react-dom';
+import {createStore} from 'redux';
+import {Provider} from 'react-redux'; // Передает параметры по всей иерархии ниже
 import reducer from './reducer';
+import App from './components/app';
 
 // STORE
 const store = createStore(reducer);
-const {dispatch, getState, subscribe} = store;
-
-// const bindActionCreator = (creator, dispatch) => (...args) => {
-// 	dispatch(creator());
-// }
-
-const {incDispatch, decDispatch, rndDispatch} = bindActionCreators({
-		incDispatch: inc,
-		decDispatch: dec,
-		rndDispatch: rnd
-	}, dispatch);
-// const incDispatch = bindActionCreators(inc, dispatch);
-// const decDispatch = bindActionCreators(dec, dispatch);
-// const rndDispatch = bindActionCreators(rnd, dispatch);
-
-document.getElementById('inc').addEventListener('click', incDispatch);
-document.getElementById('dec').addEventListener('click', decDispatch);
-document.getElementById('rnd').addEventListener('click', rndDispatch);
 
 const update = () => {
-	document.getElementById('counter').textContent = getState();
+	ReactDom.render(
+	<Provider store={store}>
+		<App/>
+	</Provider>,
+	document.getElementById('root'));
 }
-
-
-subscribe(() => {
-	update();
-});
-
-// dispatch({type: 'INC'});
-// dispatch({type: 'INC'});
-// dispatch({type: 'INC'});
+update();
